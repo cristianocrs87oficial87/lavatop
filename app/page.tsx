@@ -16,6 +16,27 @@ export default function Home() {
       return;
     }
 
+    // Verifica se o horário já está ocupado
+    const { data: existente, error: erroConsulta } = await supabase
+      .from("agendamentos")
+      .select("id")
+      .eq("data_agendamento", data)
+      .eq("hora_agendamento", hora)
+      .limit(1);
+
+    if (erroConsulta) {
+      console.log(erroConsulta);
+      alert("Erro ao verificar disponibilidade.");
+      return;
+    }
+
+    if (existente && existente.length > 0) {
+      alert(
+        "Este horário já está ocupado. Escolha outro horário."
+      );
+      return;
+    }
+
     const { error } = await supabase
       .from("agendamentos")
       .insert([
@@ -25,6 +46,7 @@ export default function Home() {
           servico,
           data_agendamento: data,
           hora_agendamento: hora,
+          status: "Pendente",
         },
       ]);
 
