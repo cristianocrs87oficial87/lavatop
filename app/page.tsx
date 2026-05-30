@@ -16,12 +16,12 @@ export default function Home() {
       return;
     }
 
-    // Verifica se o horário já está ocupado
+    // Verifica se já existe agendamento para a mesma data e hora
     const { data: existente, error: erroConsulta } = await supabase
       .from("agendamentos")
       .select("id")
       .eq("data_agendamento", data)
-      .eq("hora_agendamento", hora)
+      .eq("hora_agendamento", `${hora}:00`)
       .limit(1);
 
     if (erroConsulta) {
@@ -45,7 +45,7 @@ export default function Home() {
           telefone,
           servico,
           data_agendamento: data,
-          hora_agendamento: hora,
+          hora_agendamento: `${hora}:00`,
           status: "Pendente",
         },
       ]);
