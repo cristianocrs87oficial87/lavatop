@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
 
 export default function Home() {
@@ -10,19 +10,75 @@ export default function Home() {
   const [data, setData] = useState("");
   const [hora, setHora] = useState("");
 
+  const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([]);
+
+  useEffect(() => {
+    carregarConfiguracoes();
+  }, []);
+
+  async function carregarConfiguracoes() {
+    const { data } = await supabase
+      .from("empresas")
+      .select("*")
+      .limit(1)
+      .single();
+
+    if (!data) return;
+
+    gerarHorarios(
+      data.abre || "08:00",
+      data.fecha || "18:00",
+      data.intervalo || 60
+    );
+  }
+
+  function gerarHorarios(
+    abertura: string,
+    fechamento: string,
+    intervalo: number
+  ) {
+    const horarios: string[] = [];
+
+    const [horaAbre, minAbre] =
+      abertura.split(":").map(Number);
+
+    const [horaFecha, minFecha] =
+      fechamento.split(":").map(Number);
+
+    let atual = horaAbre * 60 + minAbre;
+
+    const fim = horaFecha * 60 + minFecha;
+
+    while (atual <= fim) {
+      const horas = String(
+        Math.floor(atual / 60)
+      ).padStart(2, "0");
+
+      const minutos = String(
+        atual % 60
+      ).padStart(2, "0");
+
+      horarios.push(`${horas}:${minutos}`);
+
+      atual += intervalo;
+    }
+
+    setHorariosDisponiveis(horarios);
+  }
+
   async function agendar() {
     if (!nome || !telefone || !data || !hora) {
       alert("Preencha todos os campos!");
       return;
     }
 
-    // Verifica se já existe agendamento para a mesma data e hora
-    const { data: existente, error: erroConsulta } = await supabase
-      .from("agendamentos")
-      .select("id")
-      .eq("data_agendamento", data)
-      .eq("hora_agendamento", `${hora}:00`)
-      .limit(1);
+    const { data: existente, error: erroConsulta } =
+      await supabase
+        .from("agendamentos")
+        .select("id")
+        .eq("data_agendamento", data)
+        .eq("hora_agendamento", `${hora}:00`)
+        .limit(1);
 
     if (erroConsulta) {
       console.log(erroConsulta);
@@ -129,12 +185,24 @@ Obrigado por escolher a LavaTop!`;
             className="p-4 rounded-xl bg-zinc-800 text-white"
           />
 
-          <input
-            type="time"
+          <select
             value={hora}
             onChange={(e) => setHora(e.target.value)}
             className="p-4 rounded-xl bg-zinc-800 text-white"
-          />
+          >
+            <option value="">
+              Escolha um horário
+            </option>
+
+            {horariosDisponiveis.map((horario) => (
+              <option
+                key={horario}
+                value={horario}
+              >
+                {horario}
+              </option>
+            ))}
+          </select>
 
           <button
             onClick={agendar}
