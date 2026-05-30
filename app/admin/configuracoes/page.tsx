@@ -49,17 +49,15 @@ export default function Configuracoes() {
         })
         .eq("id", empresaExistente.id);
     } else {
-      await supabase
-        .from("empresas")
-        .insert([
-          {
-            nome,
-            telefone,
-            abre,
-            fecha,
-            intervalo,
-          },
-        ]);
+      await supabase.from("empresas").insert([
+        {
+          nome,
+          telefone,
+          abre,
+          fecha,
+          intervalo,
+        },
+      ]);
     }
 
     alert("Configurações salvas com sucesso!");
@@ -81,7 +79,7 @@ export default function Configuracoes() {
           type="text"
           value={nome}
           onChange={(e) => setNome(e.target.value)}
-          className="w-full p-3 rounded-lg text-black mb-6"
+          className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         />
 
         <label className="block mb-2 font-bold">
@@ -92,7 +90,7 @@ export default function Configuracoes() {
           type="text"
           value={telefone}
           onChange={(e) => setTelefone(e.target.value)}
-          className="w-full p-3 rounded-lg text-black mb-6"
+          className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         />
 
         <label className="block mb-2 font-bold">
@@ -103,7 +101,7 @@ export default function Configuracoes() {
           type="time"
           value={abre}
           onChange={(e) => setAbre(e.target.value)}
-          className="w-full p-3 rounded-lg text-black mb-6"
+          className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         />
 
         <label className="block mb-2 font-bold">
@@ -114,7 +112,7 @@ export default function Configuracoes() {
           type="time"
           value={fecha}
           onChange={(e) => setFecha(e.target.value)}
-          className="w-full p-3 rounded-lg text-black mb-6"
+          className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         />
 
         <label className="block mb-2 font-bold">
@@ -123,10 +121,8 @@ export default function Configuracoes() {
 
         <select
           value={intervalo}
-          onChange={(e) =>
-            setIntervalo(Number(e.target.value))
-          }
-          className="w-full p-3 rounded-lg text-black mb-8"
+          onChange={(e) => setIntervalo(Number(e.target.value))}
+          className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-8"
         >
           <option value={30}>30 minutos</option>
           <option value={60}>60 minutos</option>
