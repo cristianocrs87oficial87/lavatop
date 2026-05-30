@@ -58,6 +58,30 @@ export default function Admin() {
     );
   }
 
+  async function alterarStatus(
+    id: number,
+    novoStatus: string
+  ) {
+    const { error } = await supabase
+      .from("agendamentos")
+      .update({ status: novoStatus })
+      .eq("id", id);
+
+    if (error) {
+      alert("Erro ao atualizar status.");
+      console.log(error);
+      return;
+    }
+
+    setAgendamentos((atual) =>
+      atual.map((item) =>
+        item.id === id
+          ? { ...item, status: novoStatus }
+          : item
+      )
+    );
+  }
+
   const total = agendamentos.length;
 
   return (
@@ -121,6 +145,39 @@ export default function Admin() {
                 <strong>Hora:</strong>{" "}
                 {item.hora_agendamento || "Não informada"}
               </p>
+
+              <div className="mt-4">
+                <label className="font-bold mr-2">
+                  Status:
+                </label>
+
+                <select
+                  value={item.status || "Pendente"}
+                  onChange={(e) =>
+                    alterarStatus(
+                      item.id,
+                      e.target.value
+                    )
+                  }
+                  className="bg-zinc-700 text-white px-3 py-2 rounded-lg"
+                >
+                  <option value="Pendente">
+                    Pendente
+                  </option>
+                  <option value="Confirmado">
+                    Confirmado
+                  </option>
+                  <option value="Em andamento">
+                    Em andamento
+                  </option>
+                  <option value="Finalizado">
+                    Finalizado
+                  </option>
+                  <option value="Cancelado">
+                    Cancelado
+                  </option>
+                </select>
+              </div>
 
               <button
                 onClick={() => excluirAgendamento(item.id)}
