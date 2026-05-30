@@ -10,11 +10,17 @@ export default function Admin() {
   const [agendamentos, setAgendamentos] = useState<any[]>([]);
 
   useEffect(() => {
-    const logado = localStorage.getItem("logado");
+    async function verificarSessao() {
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
 
-    if (logado !== "true") {
-      router.push("/login");
+      if (!session) {
+        router.push("/login");
+      }
     }
+
+    verificarSessao();
   }, [router]);
 
   useEffect(() => {
@@ -34,6 +40,11 @@ export default function Admin() {
 
     carregarAgendamentos();
   }, []);
+
+  async function sair() {
+    await supabase.auth.signOut();
+    router.push("/login");
+  }
 
   async function excluirAgendamento(id: number) {
     const confirmar = confirm(
@@ -86,9 +97,18 @@ export default function Admin() {
 
   return (
     <main className="min-h-screen bg-black p-10 text-white">
-      <h1 className="text-5xl font-bold text-cyan-400 mb-10">
-        Painel Admin
-      </h1>
+      <div className="flex justify-between items-center mb-10">
+        <h1 className="text-5xl font-bold text-cyan-400">
+          Painel Admin
+        </h1>
+
+        <button
+          onClick={sair}
+          className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-bold"
+        >
+          Sair
+        </button>
+      </div>
 
       <div className="grid grid-cols-3 gap-6 mb-10">
         <div className="bg-zinc-900 p-6 rounded-2xl">
