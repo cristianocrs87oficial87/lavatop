@@ -1,51 +1,47 @@
 "use client";
 
-"use client";
-
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { supabase } from "@/lib/supabase";
 
 export default function Login() {
-
   const router = useRouter();
 
-  const [usuario, setUsuario] = useState("");
+  const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
+  const [carregando, setCarregando] = useState(false);
 
-  function entrar() {
+  async function entrar() {
+    setCarregando(true);
 
-    if (
-      usuario === "admin" &&
-      senha === "123456"
-    ) {
+    const { error } = await supabase.auth.signInWithPassword({
+      email,
+      password: senha,
+    });
 
-      localStorage.setItem("logado", "true");
+    setCarregando(false);
 
-      router.push("/admin");
-
-    } else {
-
-      alert("Usuário ou senha inválidos!");
-
+    if (error) {
+      alert("Email ou senha inválidos.");
+      console.log(error);
+      return;
     }
 
+    router.push("/admin");
   }
 
   return (
-
     <main className="min-h-screen bg-black flex items-center justify-center">
-
       <div className="bg-zinc-900 p-10 rounded-3xl w-[400px]">
-
         <h1 className="text-5xl font-bold text-cyan-400 text-center mb-10">
           Login Admin
         </h1>
 
         <input
-          type="text"
-          placeholder="Usuário"
-          value={usuario}
-          onChange={(e) => setUsuario(e.target.value)}
+          type="email"
+          placeholder="E-mail"
+          value={email}
+          onChange={(e) => setEmail(e.target.value)}
           className="w-full p-4 rounded-xl bg-zinc-800 text-white mb-4"
         />
 
@@ -59,15 +55,12 @@ export default function Login() {
 
         <button
           onClick={entrar}
+          disabled={carregando}
           className="w-full bg-cyan-500 hover:bg-cyan-400 transition p-4 rounded-xl text-white font-bold text-2xl"
         >
-          Entrar
+          {carregando ? "Entrando..." : "Entrar"}
         </button>
-
       </div>
-
     </main>
-
   );
-
 }
