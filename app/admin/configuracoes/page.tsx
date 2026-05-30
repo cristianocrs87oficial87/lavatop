@@ -10,6 +10,14 @@ export default function Configuracoes() {
   const [fecha, setFecha] = useState("18:00");
   const [intervalo, setIntervalo] = useState(60);
 
+  const [diasFuncionamento, setDiasFuncionamento] = useState<string[]>([
+    "segunda",
+    "terca",
+    "quarta",
+    "quinta",
+    "sexta",
+  ]);
+
   useEffect(() => {
     carregarEmpresa();
   }, []);
@@ -27,6 +35,16 @@ export default function Configuracoes() {
       setAbre(data.abre || "08:00");
       setFecha(data.fecha || "18:00");
       setIntervalo(data.intervalo || 60);
+
+      setDiasFuncionamento(
+        data.dias_funcionamento || [
+          "segunda",
+          "terca",
+          "quarta",
+          "quinta",
+          "sexta",
+        ]
+      );
     }
   }
 
@@ -46,18 +64,22 @@ export default function Configuracoes() {
           abre,
           fecha,
           intervalo,
+          dias_funcionamento: diasFuncionamento,
         })
         .eq("id", empresaExistente.id);
     } else {
-      await supabase.from("empresas").insert([
-        {
-          nome,
-          telefone,
-          abre,
-          fecha,
-          intervalo,
-        },
-      ]);
+      await supabase
+        .from("empresas")
+        .insert([
+          {
+            nome,
+            telefone,
+            abre,
+            fecha,
+            intervalo,
+            dias_funcionamento: diasFuncionamento,
+          },
+        ]);
     }
 
     alert("Configurações salvas com sucesso!");
@@ -122,13 +144,58 @@ export default function Configuracoes() {
         <select
           value={intervalo}
           onChange={(e) => setIntervalo(Number(e.target.value))}
-          className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-8"
+          className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         >
           <option value={30}>30 minutos</option>
           <option value={60}>60 minutos</option>
           <option value={90}>90 minutos</option>
           <option value={120}>120 minutos</option>
         </select>
+
+        <label className="block mb-4 font-bold text-xl">
+          Dias de Funcionamento
+        </label>
+
+        <div className="grid grid-cols-2 gap-3 mb-8">
+
+          {[
+            "segunda",
+            "terca",
+            "quarta",
+            "quinta",
+            "sexta",
+            "sabado",
+            "domingo",
+          ].map((dia) => (
+            <label
+              key={dia}
+              className="flex items-center gap-2"
+            >
+              <input
+                type="checkbox"
+                checked={diasFuncionamento.includes(dia)}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setDiasFuncionamento([
+                      ...diasFuncionamento,
+                      dia,
+                    ]);
+                  } else {
+                    setDiasFuncionamento(
+                      diasFuncionamento.filter(
+                        (d) => d !== dia
+                      )
+                    );
+                  }
+                }}
+              />
+
+              {dia.charAt(0).toUpperCase() +
+                dia.slice(1)}
+            </label>
+          ))}
+
+        </div>
 
         <button
           onClick={salvar}
