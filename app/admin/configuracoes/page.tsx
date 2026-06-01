@@ -23,21 +23,25 @@ export default function Configuracoes() {
   }, []);
 
   async function carregarEmpresa() {
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("empresas")
       .select("*")
-      .limit(1)
-      .single();
+      .limit(1);
 
-    if (data) {
-      setNome(data.nome || "");
-      setTelefone(data.telefone || "");
-      setAbre(data.abre || "08:00");
-      setFecha(data.fecha || "18:00");
-      setIntervalo(data.intervalo || 60);
+    console.log("CARREGAR EMPRESA:", data);
+    console.log("ERRO:", error);
+
+    if (data && data.length > 0) {
+      const empresa = data[0];
+
+      setNome(empresa.nome || "");
+      setTelefone(empresa.telefone || "");
+      setAbre(empresa.abre || "08:00");
+      setFecha(empresa.fecha || "18:00");
+      setIntervalo(empresa.intervalo || 60);
 
       setDiasFuncionamento(
-        data.dias_funcionamento || [
+        empresa.dias_funcionamento || [
           "segunda",
           "terca",
           "quarta",
@@ -49,40 +53,88 @@ export default function Configuracoes() {
   }
 
   async function salvar() {
-    const { data: empresaExistente } = await supabase
-      .from("empresas")
-      .select("id")
-      .limit(1)
-      .single();
+    try {
+      console.log("SALVAR CLICADO");
 
-    if (empresaExistente) {
-      await supabase
+      const {
+        data: empresaExistente,
+        error: erroBusca,
+      } = await supabase
         .from("empresas")
-        .update({
-          nome,
-          telefone,
-          abre,
-          fecha,
-          intervalo,
-          dias_funcionamento: diasFuncionamento,
-        })
-        .eq("id", empresaExistente.id);
-    } else {
-      await supabase
-        .from("empresas")
-        .insert([
-          {
+        .select("id")
+        .limit(1);
+
+      console.log("EMPRESA EXISTENTE:", empresaExistente);
+      console.log("ERRO BUSCA:", erroBusca);
+
+      if (erroBusca) {
+        alert("Erro ao buscar empresa");
+        console.log(erroBusca);
+        return;
+      }
+
+      let resultado;
+
+      if (
+        empresaExistente &&
+        empresaExistente.length > 0
+      ) {
+        resultado = await supabase
+          .from("empresas")
+          .update({
             nome,
             telefone,
             abre,
             fecha,
             intervalo,
-            dias_funcionamento: diasFuncionamento,
-          },
-        ]);
-    }
+            dias_funcionamento:
+              diasFuncionamento,
+          })
+          .eq("id", empresaExistente[0].id)
+          .select();
+      } else {
+        resultado = await supabase
+          .from("empresas")
+          .insert([
+            {
+              nome,
+              telefone,
+              abre,
+              fecha,
+              intervalo,
+              dias_funcionamento:
+                diasFuncionamento,
+            },
+          ])
+          .select();
+      }
 
-    alert("Configurações salvas com sucesso!");
+      console.log("RESULTADO:", resultado);
+
+      if (resultado.error) {
+        console.log(resultado.error);
+
+        alert(
+          "ERRO SUPABASE:\n\n" +
+            JSON.stringify(
+              resultado.error,
+              null,
+              2
+            )
+        );
+
+        return;
+      }
+
+      alert(
+        "Configurações salvas com sucesso!"
+      );
+
+      carregarEmpresa();
+    } catch (erro) {
+      console.log(erro);
+      alert("Erro inesperado.");
+    }
   }
 
   return (
@@ -92,7 +144,6 @@ export default function Configuracoes() {
       </h1>
 
       <div className="bg-zinc-900 p-8 rounded-2xl max-w-2xl">
-
         <label className="block mb-2 font-bold">
           Nome da Empresa
         </label>
@@ -100,7 +151,9 @@ export default function Configuracoes() {
         <input
           type="text"
           value={nome}
-          onChange={(e) => setNome(e.target.value)}
+          onChange={(e) =>
+            setNome(e.target.value)
+          }
           className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         />
 
@@ -111,7 +164,9 @@ export default function Configuracoes() {
         <input
           type="text"
           value={telefone}
-          onChange={(e) => setTelefone(e.target.value)}
+          onChange={(e) =>
+            setTelefone(e.target.value)
+          }
           className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         />
 
@@ -122,7 +177,9 @@ export default function Configuracoes() {
         <input
           type="time"
           value={abre}
-          onChange={(e) => setAbre(e.target.value)}
+          onChange={(e) =>
+            setAbre(e.target.value)
+          }
           className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         />
 
@@ -133,7 +190,9 @@ export default function Configuracoes() {
         <input
           type="time"
           value={fecha}
-          onChange={(e) => setFecha(e.target.value)}
+          onChange={(e) =>
+            setFecha(e.target.value)
+          }
           className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         />
 
@@ -143,13 +202,25 @@ export default function Configuracoes() {
 
         <select
           value={intervalo}
-          onChange={(e) => setIntervalo(Number(e.target.value))}
+          onChange={(e) =>
+            setIntervalo(
+              Number(e.target.value)
+            )
+          }
           className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         >
-          <option value={30}>30 minutos</option>
-          <option value={60}>60 minutos</option>
-          <option value={90}>90 minutos</option>
-          <option value={120}>120 minutos</option>
+          <option value={30}>
+            30 minutos
+          </option>
+          <option value={60}>
+            60 minutos
+          </option>
+          <option value={90}>
+            90 minutos
+          </option>
+          <option value={120}>
+            120 minutos
+          </option>
         </select>
 
         <label className="block mb-4 font-bold text-xl">
@@ -157,7 +228,6 @@ export default function Configuracoes() {
         </label>
 
         <div className="grid grid-cols-2 gap-3 mb-8">
-
           {[
             "segunda",
             "terca",
@@ -173,7 +243,9 @@ export default function Configuracoes() {
             >
               <input
                 type="checkbox"
-                checked={diasFuncionamento.includes(dia)}
+                checked={diasFuncionamento.includes(
+                  dia
+                )}
                 onChange={(e) => {
                   if (e.target.checked) {
                     setDiasFuncionamento([
@@ -194,7 +266,6 @@ export default function Configuracoes() {
                 dia.slice(1)}
             </label>
           ))}
-
         </div>
 
         <button
@@ -203,7 +274,6 @@ export default function Configuracoes() {
         >
           Salvar Configurações
         </button>
-
       </div>
     </main>
   );

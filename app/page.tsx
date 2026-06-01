@@ -17,20 +17,23 @@ export default function Home() {
   }, []);
 
   async function carregarConfiguracoes() {
-    const { data } = await supabase
-      .from("empresas")
-      .select("*")
-      .limit(1)
-      .single();
+  const { data, error } = await supabase
+    .from("empresas")
+    .select("*")
+    .limit(1)
+    .single();
 
-    if (!data) return;
+  console.log("EMPRESA:", data);
+  console.log("ERRO:", error);
 
-    gerarHorarios(
-      data.abre || "08:00",
-      data.fecha || "18:00",
-      data.intervalo || 60
-    );
-  }
+  if (!data) return;
+
+  gerarHorarios(
+    data.abre || "08:00",
+    data.fecha || "18:00",
+    data.intervalo || 60
+  );
+}
 
   function gerarHorarios(
     abertura: string,
