@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export default function Admin() {
@@ -146,11 +147,15 @@ export default function Admin() {
       <div className="grid grid-cols-4 gap-6 mb-10">
         <div className="bg-zinc-900 p-6 rounded-2xl">
           <p className="text-xl">Total Agendamentos</p>
-          <h2 className="text-5xl font-bold mt-2">{total}</h2>
+          <h2 className="text-5xl font-bold mt-2">
+            {total}
+          </h2>
         </div>
 
         <div className="bg-zinc-900 p-6 rounded-2xl">
-          <p className="text-xl">Faturamento Estimado</p>
+          <p className="text-xl">
+            Faturamento Estimado
+          </p>
           <h2 className="text-5xl font-bold text-green-400 mt-2">
             R$ {total * 50}
           </h2>
@@ -170,9 +175,15 @@ export default function Admin() {
             {assinatura?.plano || "gratis"}
           </h2>
 
-          <p className="mt-2">
+          <p className="mt-2 mb-4">
             Status: {assinatura?.status || "ativo"}
           </p>
+
+          <Link href="/admin/planos">
+            <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-xl">
+              🚀 Fazer Upgrade para Premium
+            </button>
+          </Link>
         </div>
       </div>
 
@@ -190,25 +201,30 @@ export default function Admin() {
               className="bg-zinc-800 p-5 rounded-xl mb-4"
             >
               <p>
-                <strong>Cliente:</strong> {item.cliente}
+                <strong>Cliente:</strong>{" "}
+                {item.cliente}
               </p>
 
               <p>
-                <strong>Telefone:</strong> {item.telefone}
+                <strong>Telefone:</strong>{" "}
+                {item.telefone}
               </p>
 
               <p>
-                <strong>Serviço:</strong> {item.servico}
+                <strong>Serviço:</strong>{" "}
+                {item.servico}
               </p>
 
               <p>
                 <strong>Data:</strong>{" "}
-                {item.data_agendamento || "Não informada"}
+                {item.data_agendamento ||
+                  "Não informada"}
               </p>
 
               <p>
                 <strong>Hora:</strong>{" "}
-                {item.hora_agendamento || "Não informada"}
+                {item.hora_agendamento ||
+                  "Não informada"}
               </p>
 
               <div className="mt-4">
@@ -226,16 +242,28 @@ export default function Admin() {
                   }
                   className="bg-zinc-700 text-white px-3 py-2 rounded-lg"
                 >
-                  <option value="Pendente">Pendente</option>
-                  <option value="Confirmado">Confirmado</option>
-                  <option value="Em andamento">Em andamento</option>
-                  <option value="Finalizado">Finalizado</option>
-                  <option value="Cancelado">Cancelado</option>
+                  <option value="Pendente">
+                    Pendente
+                  </option>
+                  <option value="Confirmado">
+                    Confirmado
+                  </option>
+                  <option value="Em andamento">
+                    Em andamento
+                  </option>
+                  <option value="Finalizado">
+                    Finalizado
+                  </option>
+                  <option value="Cancelado">
+                    Cancelado
+                  </option>
                 </select>
               </div>
 
               <button
-                onClick={() => excluirAgendamento(item.id)}
+                onClick={() =>
+                  excluirAgendamento(item.id)
+                }
                 className="mt-4 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold"
               >
                 Excluir
