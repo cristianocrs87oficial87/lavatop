@@ -25,18 +25,25 @@ export default function Admin() {
 
   useEffect(() => {
     async function carregarAgendamentos() {
-      const { data, error } = await supabase
-        .from("agendamentos")
-        .select("*")
-        .order("id", { ascending: false });
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-      if (error) {
-        console.log(error);
-        return;
-      }
+  if (!user) return;
 
-      setAgendamentos(data || []);
-    }
+  const { data, error } = await supabase
+    .from("agendamentos")
+    .select("*")
+    .eq("usuario_id", user.id)
+    .order("id", { ascending: false });
+
+  if (error) {
+    console.log(error);
+    return;
+  }
+
+  setAgendamentos(data || []);
+}
 
     carregarAgendamentos();
   }, []);
