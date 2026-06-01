@@ -8,6 +8,7 @@ export default function Admin() {
   const router = useRouter();
 
   const [agendamentos, setAgendamentos] = useState<any[]>([]);
+  const [assinatura, setAssinatura] = useState<any>(null);
 
   useEffect(() => {
     async function verificarSessao() {
@@ -25,27 +26,52 @@ export default function Admin() {
 
   useEffect(() => {
     async function carregarAgendamentos() {
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  if (!user) return;
+      if (!user) return;
 
-  const { data, error } = await supabase
-    .from("agendamentos")
-    .select("*")
-    .eq("usuario_id", user.id)
-    .order("id", { ascending: false });
+      const { data, error } = await supabase
+        .from("agendamentos")
+        .select("*")
+        .eq("usuario_id", user.id)
+        .order("id", { ascending: false });
 
-  if (error) {
-    console.log(error);
-    return;
-  }
+      if (error) {
+        console.log(error);
+        return;
+      }
 
-  setAgendamentos(data || []);
-}
+      setAgendamentos(data || []);
+    }
 
     carregarAgendamentos();
+  }, []);
+
+  useEffect(() => {
+    async function carregarAssinatura() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) return;
+
+      const { data, error } = await supabase
+        .from("assinaturas")
+        .select("*")
+        .eq("usuario_id", user.id)
+        .single();
+
+      if (error) {
+        console.log(error);
+        return;
+      }
+
+      setAssinatura(data);
+    }
+
+    carregarAssinatura();
   }, []);
 
   async function sair() {
@@ -117,7 +143,7 @@ export default function Admin() {
         </button>
       </div>
 
-      <div className="grid grid-cols-3 gap-6 mb-10">
+      <div className="grid grid-cols-4 gap-6 mb-10">
         <div className="bg-zinc-900 p-6 rounded-2xl">
           <p className="text-xl">Total Agendamentos</p>
           <h2 className="text-5xl font-bold mt-2">{total}</h2>
@@ -135,6 +161,18 @@ export default function Admin() {
           <h2 className="text-5xl font-bold text-cyan-400 mt-2">
             {total}
           </h2>
+        </div>
+
+        <div className="bg-zinc-900 p-6 rounded-2xl border border-cyan-500">
+          <p className="text-xl">Plano Atual</p>
+
+          <h2 className="text-3xl font-bold text-cyan-400 mt-2">
+            {assinatura?.plano || "gratis"}
+          </h2>
+
+          <p className="mt-2">
+            Status: {assinatura?.status || "ativo"}
+          </p>
         </div>
       </div>
 
@@ -188,21 +226,11 @@ export default function Admin() {
                   }
                   className="bg-zinc-700 text-white px-3 py-2 rounded-lg"
                 >
-                  <option value="Pendente">
-                    Pendente
-                  </option>
-                  <option value="Confirmado">
-                    Confirmado
-                  </option>
-                  <option value="Em andamento">
-                    Em andamento
-                  </option>
-                  <option value="Finalizado">
-                    Finalizado
-                  </option>
-                  <option value="Cancelado">
-                    Cancelado
-                  </option>
+                  <option value="Pendente">Pendente</option>
+                  <option value="Confirmado">Confirmado</option>
+                  <option value="Em andamento">Em andamento</option>
+                  <option value="Finalizado">Finalizado</option>
+                  <option value="Cancelado">Cancelado</option>
                 </select>
               </div>
 
