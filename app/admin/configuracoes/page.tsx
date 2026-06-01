@@ -94,14 +94,15 @@ export default function Configuracoes() {
         resultado = await supabase
           .from("empresas")
           .update({
-            nome,
-            telefone,
-            abre,
-            fecha,
-            intervalo,
-            dias_funcionamento:
-              diasFuncionamento,
-          })
+  nome,
+  telefone,
+  abre,
+  fecha,
+  intervalo,
+  dias_funcionamento:
+    diasFuncionamento,
+  usuario_id: user.id,
+})
           .eq("id", empresaExistente[0].id)
           .select();
       } else {
