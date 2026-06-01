@@ -23,12 +23,20 @@ export default function Configuracoes() {
   }, []);
 
   async function carregarEmpresa() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) return;
+
     const { data, error } = await supabase
       .from("empresas")
       .select("*")
+      .eq("usuario_id", user.id)
       .limit(1);
 
-    console.log("CARREGAR EMPRESA:", data);
+    console.log("USUARIO:", user.id);
+    console.log("EMPRESA:", data);
     console.log("ERRO:", error);
 
     if (data && data.length > 0) {
@@ -54,7 +62,14 @@ export default function Configuracoes() {
 
   async function salvar() {
     try {
-      console.log("SALVAR CLICADO");
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+
+      if (!user) {
+        alert("Usuário não encontrado.");
+        return;
+      }
 
       const {
         data: empresaExistente,
@@ -62,14 +77,11 @@ export default function Configuracoes() {
       } = await supabase
         .from("empresas")
         .select("id")
-        .limit(1);
-
-      console.log("EMPRESA EXISTENTE:", empresaExistente);
-      console.log("ERRO BUSCA:", erroBusca);
+        .eq("usuario_id", user.id);
 
       if (erroBusca) {
-        alert("Erro ao buscar empresa");
         console.log(erroBusca);
+        alert("Erro ao buscar empresa.");
         return;
       }
 
@@ -104,12 +116,11 @@ export default function Configuracoes() {
               intervalo,
               dias_funcionamento:
                 diasFuncionamento,
+              usuario_id: user.id,
             },
           ])
           .select();
       }
-
-      console.log("RESULTADO:", resultado);
 
       if (resultado.error) {
         console.log(resultado.error);
