@@ -53,6 +53,17 @@ export default function CadastroPage() {
         ]);
 
       if (empresaError) throw empresaError;
+      const { error: assinaturaError } = await supabase
+  .from("assinaturas")
+  .insert([
+    {
+      usuario_id: usuario.id,
+      plano: "gratis",
+      status: "ativo",
+    },
+  ]);
+
+if (assinaturaError) throw assinaturaError;
 
       await supabase.auth.signInWithPassword({
         email,
