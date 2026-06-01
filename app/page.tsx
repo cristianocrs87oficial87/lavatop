@@ -99,21 +99,26 @@ console.log("INTERVALO:", data?.intervalo);
       );
       return;
     }
+    const { data: empresa } = await supabase
+  .from("empresas")
+  .select("usuario_id")
+  .limit(1)
+  .single();
 
-    const { error } = await supabase
-      .from("agendamentos")
-      .insert([
-        {
-          cliente: nome,
-          telefone,
-          servico,
-          data_agendamento: data,
-          hora_agendamento: `${hora}:00`,
-          status: "Pendente",
-        },
-      ]);
-
-    if (error) {
+const { error } = await supabase
+  .from("agendamentos")
+  .insert([
+    {
+      cliente: nome,
+      telefone,
+      servico,
+      data_agendamento: data,
+      hora_agendamento: `${hora}:00`,
+      status: "Pendente",
+      usuario_id: empresa?.usuario_id,
+    },
+  ]);
+if (error) {
       console.log(error);
       alert(JSON.stringify(error));
       return;
