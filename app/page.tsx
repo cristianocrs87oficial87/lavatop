@@ -25,6 +25,9 @@ export default function Home() {
 
   console.log("EMPRESA:", data);
   console.log("ERRO:", error);
+  console.log("ABRE:", data?.abre);
+console.log("FECHA:", data?.fecha);
+console.log("INTERVALO:", data?.intervalo);
 
   if (!data) return;
 
@@ -66,6 +69,7 @@ export default function Home() {
       atual += intervalo;
     }
 
+    console.log("HORARIOS GERADOS:", horarios);
     setHorariosDisponiveis(horarios);
   }
 
