@@ -11,9 +11,10 @@ export default function Planos() {
             Grátis
           </h2>
 
-          <p>Até 50 agendamentos por mês</p>
-          <p>Suporte básico</p>
+          <p>Agendamentos online</p>
+          <p>Configurações da empresa</p>
           <p>Painel administrativo</p>
+          <p>Suporte básico</p>
         </div>
 
         <div className="bg-zinc-900 p-6 rounded-2xl border border-yellow-500">
@@ -21,8 +22,12 @@ export default function Planos() {
             Premium Mensal
           </h2>
 
+          <p className="text-green-400 font-bold mb-2">
+            ⭐ Mais Escolhido
+          </p>
+
           <p className="text-4xl font-bold mb-4">
-            R$ 29,90
+            R$ 49,99/mês
           </p>
 
           <p>Agendamentos ilimitados</p>
@@ -40,12 +45,16 @@ export default function Planos() {
             Premium Anual
           </h2>
 
-          <p className="text-4xl font-bold mb-4">
-            R$ 299,00
+          <p className="text-4xl font-bold mb-2">
+            R$ 497,00/ano
+          </p>
+
+          <p className="text-green-400 font-bold mb-4">
+            Economize mais de R$ 100 por ano
           </p>
 
           <p>Tudo do Premium</p>
-          <p>2 meses grátis</p>
+          <p>Suporte prioritário</p>
 
           <button className="mt-6 w-full bg-green-500 hover:bg-green-600 font-bold py-3 rounded-xl">
             Assinar Anual
