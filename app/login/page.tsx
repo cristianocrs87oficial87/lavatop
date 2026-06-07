@@ -22,12 +22,14 @@ export default function Login() {
     setCarregando(false);
 
     if (error) {
-      alert("Email ou senha inválidos.");
-      console.log(error);
-      return;
-    }
+  console.log(error);
+  alert(JSON.stringify(error));
+  return;
+}
 
-    router.push("/admin");
+    setTimeout(() => {
+  router.push("/admin");
+}, 1500);
   }
 
   return (
@@ -60,6 +62,14 @@ export default function Login() {
         >
           {carregando ? "Entrando..." : "Entrar"}
         </button>
+        <div className="mt-4 text-center">
+  <a
+    href="/esqueci-senha"
+    className="text-cyan-400 hover:text-cyan-300"
+  >
+    Esqueci minha senha
+  </a>
+</div>
       </div>
     </main>
   );

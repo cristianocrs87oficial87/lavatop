@@ -9,7 +9,7 @@ export default function Admin() {
   const router = useRouter();
 
   const [agendamentos, setAgendamentos] = useState<any[]>([]);
-  const [assinatura, setAssinatura] = useState<any>(null);
+  const [empresa, setEmpresa] = useState<any>(null);
 
   useEffect(() => {
     async function verificarSessao() {
@@ -51,29 +51,29 @@ export default function Admin() {
   }, []);
 
   useEffect(() => {
-    async function carregarAssinatura() {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+  async function carregarEmpresa() {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-      if (!user) return;
+    if (!user) return;
 
-      const { data, error } = await supabase
-        .from("assinaturas")
-        .select("*")
-        .eq("usuario_id", user.id)
-        .single();
+    const { data, error } = await supabase
+      .from("empresas")
+      .select("premium, premium_ate")
+      .eq("usuario_id", user.id)
+      .single();
 
-      if (error) {
-        console.log(error);
-        return;
-      }
-
-      setAssinatura(data);
+    if (error) {
+      console.log(error);
+      return;
     }
 
-    carregarAssinatura();
-  }, []);
+    setEmpresa(data);
+  }
+
+  carregarEmpresa();
+}, []);
 
   async function sair() {
     await supabase.auth.signOut();
@@ -104,31 +104,109 @@ export default function Admin() {
   }
 
   async function alterarStatus(
-    id: number,
-    novoStatus: string
-  ) {
-    const { error } = await supabase
-      .from("agendamentos")
-      .update({ status: novoStatus })
-      .eq("id", id);
+  id: number,
+  novoStatus: string
+) {
+  const agendamento = agendamentos.find(
+    (item) => item.id === id
+  );
 
-    if (error) {
-      alert("Erro ao atualizar status.");
-      console.log(error);
-      return;
-    }
+  const { error } = await supabase
+    .from("agendamentos")
+    .update({ status: novoStatus })
+    .eq("id", id);
 
-    setAgendamentos((atual) =>
-      atual.map((item) =>
-        item.id === id
-          ? { ...item, status: novoStatus }
-          : item
-      )
-    );
+  if (error) {
+    alert("Erro ao atualizar status.");
+    console.log(error);
+    return;
   }
 
-  const total = agendamentos.length;
+  if (
+    novoStatus === "Finalizado" &&
+    agendamento
+  ) {
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
+      if (!user) return;
+
+      const { data: clienteExistente } =
+        await supabase
+          .from("clientes_fidelidade")
+          .select("*")
+          .eq("usuario_id", user.id)
+          .eq(
+            "telefone",
+            agendamento.telefone
+          )
+          .single();
+
+      if (!clienteExistente) {
+        await supabase
+          .from("clientes_fidelidade")
+          .insert([
+            {
+              usuario_id: user.id,
+              cliente: agendamento.cliente,
+              telefone: agendamento.telefone,
+              pontos: 1,
+              total_lavagens: 1,
+            },
+          ]);
+      } else {
+        const novosPontos =
+          (clienteExistente.pontos || 0) + 1;
+
+        const novasLavagens =
+          (clienteExistente.total_lavagens || 0) +
+          1;
+
+        await supabase
+          .from("clientes_fidelidade")
+          .update({
+            pontos: novosPontos,
+            total_lavagens: novasLavagens,
+          })
+          .eq("id", clienteExistente.id);
+
+        const { data: empresa } =
+          await supabase
+            .from("empresas")
+            .select("*")
+            .eq("usuario_id", user.id)
+            .single();
+
+        if (
+          empresa?.fidelidade_ativa &&
+          novasLavagens >=
+            empresa.fidelidade_meta
+        ) {
+          alert(
+            `🎉 Cliente atingiu a meta!\n\nRecompensa:\n${empresa.fidelidade_recompensa}`
+          );
+        }
+      }
+    } catch (erro) {
+      console.log(
+        "Erro fidelidade:",
+        erro
+      );
+    }
+  }
+
+  setAgendamentos((atual) =>
+    atual.map((item) =>
+      item.id === id
+        ? { ...item, status: novoStatus }
+        : item
+    )
+  );
+}
+
+  const total = agendamentos.length;
   return (
     <main className="min-h-screen bg-black p-10 text-white">
       <div className="flex justify-between items-center mb-10">
@@ -172,18 +250,53 @@ export default function Admin() {
           <p className="text-xl">Plano Atual</p>
 
           <h2 className="text-3xl font-bold text-cyan-400 mt-2">
-            {assinatura?.plano || "gratis"}
-          </h2>
+  {empresa?.premium
+  ? "Premium"
+  : "Teste Grátis"}
+</h2>
 
-          <p className="mt-2 mb-4">
-            Status: {assinatura?.status || "ativo"}
-          </p>
+<p className="mt-2 mb-4">
+  {empresa === null
+    ? "Verificando plano..."
+    : `Status: ${empresa.premium ? "Ativo" : "Teste"}`}
+</p>
 
           <Link href="/admin/planos">
-            <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-xl">
-              🚀 Fazer Upgrade para Premium
-            </button>
-          </Link>
+  <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-xl">
+    🚀 Fazer Upgrade para Premium
+  </button>
+</Link>
+<Link href="/admin/fidelidade">
+  <button className="w-full mt-3 bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 rounded-xl">
+    ⭐ Programa Fidelidade
+  </button>
+</Link>
+<Link href="/admin/clientes-fidelidade">
+<Link href="/">
+  <button className="w-full mt-3 bg-purple-500 hover:bg-purple-600 text-white font-bold py-3 rounded-xl">
+    📅 Abrir Página de Agendamento
+  </button>
+</Link>
+
+<button
+  onClick={() => {
+    navigator.clipboard.writeText(window.location.origin);
+    alert("Link copiado!");
+  }}
+  className="w-full mt-3 bg-zinc-700 hover:bg-zinc-600 text-white font-bold py-3 rounded-xl"
+>
+  📋 Copiar Link de Agendamento
+</button>
+
+<Link href="/admin/configuracoes">
+  <button className="w-full mt-3 bg-blue-500 hover:bg-blue-600 text-white font-bold py-3 rounded-xl">
+    ⚙️ Configurar Empresa
+  </button>
+</Link>
+  <button className="w-full mt-3 bg-green-500 hover:bg-green-600 text-black font-bold py-3 rounded-xl">
+    👥 Clientes Fidelidade
+  </button>
+</Link>
         </div>
       </div>
 

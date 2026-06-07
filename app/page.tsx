@@ -99,13 +99,7 @@ console.log("INTERVALO:", data?.intervalo);
       );
       return;
     }
-    const { data: empresa } = await supabase
-  .from("empresas")
-  .select("usuario_id")
-  .limit(1)
-  .single();
-
-const { error } = await supabase
+   const { error } = await supabase
   .from("agendamentos")
   .insert([
     {
@@ -115,7 +109,9 @@ const { error } = await supabase
       data_agendamento: data,
       hora_agendamento: `${hora}:00`,
       status: "Pendente",
-      usuario_id: empresa?.usuario_id,
+
+      usuario_id:
+        "ba61d073-1067-4d0d-a826-4239a94d58e1",
     },
   ]);
 if (error) {
