@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "@/lib/supabase";
 
@@ -13,6 +13,16 @@ export default function CadastroPage() {
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
   const [loading, setLoading] = useState(false);
+  const [codigoRef, setCodigoRef] = useState("");
+  useEffect(() => {
+  const params = new URLSearchParams(window.location.search);
+
+  const ref = params.get("ref");
+
+  if (ref) {
+    setCodigoRef(ref);
+  }
+}, []);
 
   async function cadastrar() {
     try {
@@ -45,31 +55,57 @@ export default function CadastroPage() {
       const premiumAte = new Date();
       premiumAte.setDate(premiumAte.getDate() + 7);
 
-      const { error: empresaError } = await supabase
-        .from("empresas")
-        .insert([
-          {
-            nome: empresa,
-            telefone,
-            abre: "08:00",
-            fecha: "18:00",
-            intervalo: 30,
-            dias_funcionamento: [
-              "segunda",
-              "terca",
-              "quarta",
-              "quinta",
-              "sexta",
-            ],
+      const codigoIndicacao =
+  Math.random().toString(36).substring(2, 8).toUpperCase();
 
-            usuario_id: usuario.id,
+const { data: empresaCriada, error: empresaError } = await supabase
+  .from("empresas")
+  .insert([
+    {
+      nome: empresa,
+      telefone,
+      abre: "08:00",
+      fecha: "18:00",
+      intervalo: 30,
 
-            premium: false,
-            premium_ate: premiumAte.toISOString(),
-          },
-        ]);
+      dias_funcionamento: [
+        "segunda",
+        "terca",
+        "quarta",
+        "quinta",
+        "sexta",
+      ],
 
-      if (empresaError) throw empresaError;
+      usuario_id: usuario.id,
+
+      premium: false,
+      premium_ate: premiumAte.toISOString(),
+
+      codigo_indicacao: codigoIndicacao,
+      indicado_por: codigoRef || null,
+    },
+  ])
+  .select()
+  .single();
+  if (empresaError) throw empresaError;
+  if (codigoRef) {
+  const { data: empresaIndicadora } = await supabase
+    .from("empresas")
+    .select("id")
+    .eq("codigo_indicacao", codigoRef)
+    .single();
+
+  if (empresaIndicadora) {
+    await supabase.from("indicacoes").insert([
+      {
+        empresa_indicadora_id: empresaIndicadora.id,
+        empresa_indicada_id: empresaCriada.id,
+        codigo_indicacao: codigoRef,
+        status: "CADASTROU",
+      },
+    ]);
+  }
+}
 
       const { error: assinaturaError } = await supabase
         .from("assinaturas")

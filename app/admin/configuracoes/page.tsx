@@ -11,6 +11,10 @@ export default function Configuracoes() {
   const [abre, setAbre] = useState("08:00");
   const [fecha, setFecha] = useState("18:00");
   const [intervalo, setIntervalo] = useState(60);
+  const [logoUrl, setLogoUrl] = useState("");
+const [bannerUrl, setBannerUrl] = useState("");
+const [corPrincipal, setCorPrincipal] = useState("#06b6d4");
+const [mensagemCliente, setMensagemCliente] = useState("");
 
   const [diasFuncionamento, setDiasFuncionamento] = useState<string[]>([
     "segunda",
@@ -24,10 +28,65 @@ const [novoServico, setNovoServico] = useState("");
 const [novoPreco, setNovoPreco] = useState("");
 const [novaDuracao, setNovaDuracao] = useState("");
 
+
+
   useEffect(() => {
   carregarEmpresa();
   carregarServicos();
 }, []);
+async function uploadLogo(
+  e: React.ChangeEvent<HTMLInputElement>
+) {
+  const arquivo = e.target.files?.[0];
+
+  if (!arquivo) return;
+
+  const nomeArquivo =
+    Date.now() + "-" + arquivo.name;
+
+  const { error } = await supabase.storage
+    .from("logos")
+    .upload(nomeArquivo, arquivo);
+
+  if (error) {
+    alert("Erro ao enviar logo.");
+    console.log(error);
+    return;
+  }
+
+  const { data } = supabase.storage
+    .from("logos")
+    .getPublicUrl(nomeArquivo);
+
+  setLogoUrl(data.publicUrl);
+}
+async function uploadBanner(
+  e: React.ChangeEvent<HTMLInputElement>
+) {
+  const arquivo = e.target.files?.[0];
+
+  if (!arquivo) return;
+
+  const nomeArquivo =
+    Date.now() + "-" + arquivo.name;
+
+  const { error } = await supabase.storage
+    .from("banners")
+    .upload(nomeArquivo, arquivo);
+
+  if (error) {
+    alert("Erro ao enviar banner.");
+    console.log(error);
+    return;
+  }
+
+  const { data } = supabase.storage
+    .from("banners")
+    .getPublicUrl(nomeArquivo);
+
+  setBannerUrl(data.publicUrl);
+}
+
 
   async function carregarEmpresa() {
   const {
@@ -54,6 +113,14 @@ const [novaDuracao, setNovaDuracao] = useState("");
     setAbre(empresa.abre || "08:00");
     setFecha(empresa.fecha || "18:00");
     setIntervalo(empresa.intervalo || 60);
+    setLogoUrl(empresa.logo_url || "");
+setBannerUrl(empresa.banner_url || "");
+setCorPrincipal(
+  empresa.cor_principal || "#06b6d4"
+);
+setMensagemCliente(
+  empresa.mensagem_cliente || ""
+);
 
     setDiasFuncionamento(
       empresa.dias_funcionamento || [
@@ -187,8 +254,16 @@ async function salvar() {
   abre,
   fecha,
   intervalo,
+
   dias_funcionamento:
     diasFuncionamento,
+
+  logo_url: logoUrl,
+  banner_url: bannerUrl,
+  cor_principal: corPrincipal,
+  mensagem_cliente:
+    mensagemCliente,
+
   usuario_id: user.id,
 })
           .eq("id", empresaExistente[0].id)
@@ -197,17 +272,26 @@ async function salvar() {
         resultado = await supabase
           .from("empresas")
           .insert([
-            {
-              nome,
-              telefone,
-              abre,
-              fecha,
-              intervalo,
-              dias_funcionamento:
-                diasFuncionamento,
-              usuario_id: user.id,
-            },
-          ])
+  {
+    nome,
+    telefone,
+    abre,
+    fecha,
+    intervalo,
+
+    dias_funcionamento:
+      diasFuncionamento,
+
+    logo_url: logoUrl,
+    banner_url: bannerUrl,
+    cor_principal:
+      corPrincipal,
+    mensagem_cliente:
+      mensagemCliente,
+
+    usuario_id: user.id,
+  },
+])
           .select();
       }
 
@@ -376,7 +460,138 @@ router.push("/admin");
   ))}
 </div>
 
-{/* COLE AQUI */}
+<h2 className="text-2xl font-bold mb-6 text-cyan-400">
+  🎨 Identidade Visual
+</h2>
+<p className="text-zinc-400 mb-6">
+  Personalize a aparência da sua página de agendamento com sua logo, banner e cores da marca.
+</p>
+
+<div className="grid lg:grid-cols-2 gap-8 mb-8">
+
+  {/* LOGO */}
+  <div className="bg-zinc-800 border border-zinc-700 rounded-2xl p-6">
+
+    <h3 className="font-bold text-lg mb-4">
+      Logo da Empresa
+    </h3>
+
+    <div className="flex justify-center mb-4">
+      {logoUrl ? (
+        <img
+  src={logoUrl}
+  alt="Logo"
+  className="w-48 h-48 rounded-full object-contain bg-black border-4 border-cyan-500 p-2"
+/>
+      ) : (
+        <div className="w-32 h-32 rounded-full bg-black border-2 border-dashed border-zinc-600 flex flex-col items-center justify-center text-center">
+  <span className="text-zinc-400 text-xs">
+    LOGO
+  </span>
+
+  <span className="text-zinc-500 text-[10px] mt-1">
+    500x500px
+  </span>
+</div>
+      )}
+    </div>
+
+    <p className="text-sm text-zinc-400 mb-4 text-center">
+      Recomendado:
+      <br />
+      500x500px
+      <br />
+      PNG transparente
+    </p>
+
+    <label className="w-full bg-cyan-500 hover:bg-cyan-600 py-3 rounded-xl font-bold cursor-pointer text-center block">
+      📸 Adicionar Logo
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={uploadLogo}
+        className="hidden"
+      />
+    </label>
+
+  </div>
+
+  {/* BANNER */}
+  <div className="bg-zinc-800 border border-zinc-700 rounded-2xl p-6">
+
+    <h3 className="font-bold text-lg mb-4">
+      Banner da Empresa
+    </h3>
+
+    <div className="mb-4">
+      {bannerUrl ? (
+        <img
+          src={bannerUrl}
+          alt="Banner"
+          className="w-full h-52 rounded-xl object-cover border border-zinc-600"
+        />
+      ) : (
+        <div className="w-full h-40 rounded-xl bg-black border-2 border-dashed border-zinc-600 flex flex-col items-center justify-center">
+  <span className="text-zinc-400 font-semibold">
+    BANNER DA EMPRESA
+  </span>
+
+  <span className="text-zinc-500 text-sm mt-2">
+    1920 x 500 px
+  </span>
+</div>
+      )}
+    </div>
+
+    <p className="text-sm text-zinc-400 mb-4 text-center">
+      Recomendado:
+      <br />
+      1920x500px
+      <br />
+      JPG ou PNG
+    </p>
+
+    <label className="w-full bg-purple-600 hover:bg-purple-700 py-3 rounded-xl font-bold cursor-pointer text-center block">
+      🖼️ Adicionar Banner
+
+      <input
+        type="file"
+        accept="image/*"
+        onChange={uploadBanner}
+        className="hidden"
+      />
+    </label>
+
+  </div>
+
+</div>
+
+<label className="block mb-2 font-bold">
+  Cor Principal
+</label>
+
+<input
+  type="color"
+  value={corPrincipal}
+  onChange={(e) =>
+    setCorPrincipal(e.target.value)
+  }
+  className="w-full h-14 rounded-lg mb-6"
+/>
+
+<label className="block mb-2 font-bold">
+  Mensagem para Clientes
+</label>
+
+<textarea
+  value={mensagemCliente}
+  onChange={(e) =>
+    setMensagemCliente(e.target.value)
+  }
+  rows={4}
+  className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
+/>
 
 <hr className="my-8 border-zinc-700" />
 
