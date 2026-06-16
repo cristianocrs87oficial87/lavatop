@@ -26,7 +26,7 @@ export const metadata = {
 
     images: [
       {
-        url: "https://lavatop.com.br/og-image.jpg",
+        url: "https://lavatop.com.br/og-image.png",
         width: 1200,
         height: 630,
         alt: "LavaTop",
