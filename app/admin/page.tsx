@@ -132,6 +132,15 @@ const { data, error } = await supabase
 
 if (agendamento?.telefone) {
   let mensagem = "";
+  const [ano, mes, dia] =
+  agendamento.data_agendamento.split("-");
+
+const dataFormatada =
+  `${dia}/${mes}/${ano}`;
+
+const horaFormatada =
+  String(agendamento.hora_agendamento)
+    .substring(0, 5);
 
   if (novoStatus === "Confirmado") {
     mensagem = `Olá ${agendamento.cliente}!
@@ -139,8 +148,6 @@ if (agendamento?.telefone) {
 Seu agendamento foi CONFIRMADO ✅
 
 Serviço: ${agendamento.servico}
-Data: ${agendamento.data_agendamento}
-Hora: ${agendamento.hora_agendamento}
 
 Aguardamos você! 🚗`;
   }
