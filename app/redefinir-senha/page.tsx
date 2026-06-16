@@ -1,12 +1,37 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 
 export default function RedefinirSenhaPage() {
   const [senha, setSenha] = useState("");
   const [mensagem, setMensagem] = useState("");
+  const [carregando, setCarregando] = useState(true);
+
+  useEffect(() => {
+    async function recuperarSessao() {
+      const hash = window.location.hash;
+
+      if (hash) {
+        const params = new URLSearchParams(hash.substring(1));
+
+        const access_token = params.get("access_token");
+        const refresh_token = params.get("refresh_token");
+
+        if (access_token && refresh_token) {
+          await supabase.auth.setSession({
+            access_token,
+            refresh_token,
+          });
+        }
+      }
+
+      setCarregando(false);
+    }
+
+    recuperarSessao();
+  }, []);
 
   async function alterarSenha() {
     const { error } = await supabase.auth.updateUser({
@@ -22,6 +47,14 @@ export default function RedefinirSenhaPage() {
     }
   }
 
+  if (carregando) {
+    return (
+      <main className="min-h-screen bg-black flex items-center justify-center text-white">
+        Carregando...
+      </main>
+    );
+  }
+
   return (
     <main className="min-h-screen bg-black flex items-center justify-center px-4">
       <div className="bg-zinc-900 border border-zinc-800 p-10 rounded-3xl w-full max-w-md shadow-2xl">
@@ -31,15 +64,16 @@ export default function RedefinirSenhaPage() {
         </h1>
 
         <p className="text-zinc-400 text-center mb-8 uppercase tracking-widest text-sm">
-  SISTEMA DE AGENDAMENTO
-</p>
+          SISTEMA DE AGENDAMENTO
+        </p>
 
         <h2 className="text-white text-2xl font-bold mb-3">
-  Crie sua nova senha
-</h2>
-<p className="text-zinc-400 mb-6">
-  Digite uma nova senha para acessar sua conta novamente.
-</p>
+          Crie sua nova senha
+        </h2>
+
+        <p className="text-zinc-400 mb-6">
+          Digite uma nova senha para acessar sua conta novamente.
+        </p>
 
         <input
           type="password"
