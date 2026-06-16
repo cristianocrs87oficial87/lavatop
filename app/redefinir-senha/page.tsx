@@ -34,18 +34,24 @@ export default function RedefinirSenhaPage() {
   }, []);
 
   async function alterarSenha() {
-    const { error } = await supabase.auth.updateUser({
-      password: senha,
-    });
+  const { error } = await supabase.auth.updateUser({
+    password: senha,
+  });
 
-    if (error) {
-      setMensagem(error.message);
-    } else {
-      setMensagem(
-        "✅ Senha alterada com sucesso! Você já pode fazer login."
-      );
-    }
+  if (error) {
+    setMensagem(error.message);
+  } else {
+    setMensagem("✅ Senha alterada com sucesso!");
+
+    // encerra a sessão temporária do link de recuperação
+    await supabase.auth.signOut();
+
+    // redireciona para login após 2 segundos
+    setTimeout(() => {
+      window.location.href = "/login";
+    }, 2000);
   }
+}
 
   if (carregando) {
     return (
