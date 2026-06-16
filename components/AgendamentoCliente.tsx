@@ -258,9 +258,9 @@ setHorariosOcupados(ocupados);
           </p>
 
           <p>
-            <strong>Data:</strong> {data}
-          </p>
-
+  <strong>Data:</strong>{" "}
+  {data.split("-").reverse().join("/")}
+</p>
           <p>
             <strong>Horário:</strong> {horario}
           </p>

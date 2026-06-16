@@ -369,10 +369,14 @@ const cancelados = agendamentos.filter(
             </p>
 
             <p>
-              <strong>Data:</strong>{" "}
-              {item.data_agendamento || "Não informada"}
-            </p>
-
+  <strong>Data:</strong>{" "}
+  {item.data_agendamento
+    ? item.data_agendamento
+        .split("-")
+        .reverse()
+        .join("/")
+    : "Não informada"}
+</p>
             <p>
               <strong>Hora:</strong>{" "}
               {item.hora_agendamento || "Não informada"}
