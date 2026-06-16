@@ -9,6 +9,7 @@ export default function Home() {
   const [servico, setServico] = useState("Lavagem Completa");
   const [data, setData] = useState("");
   const [hora, setHora] = useState("");
+  const [salvando, setSalvando] = useState(false);
 
   const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([]);
 
@@ -74,10 +75,14 @@ console.log("INTERVALO:", data?.intervalo);
   }
 
   async function agendar() {
+  if (salvando) return;
+
+  setSalvando(true);
     if (!nome || !telefone || !data || !hora) {
       alert("Preencha todos os campos!");
-      return;
-    }
+  setSalvando(false);
+  return;
+}
 
     const { data: existente, error: erroConsulta } =
       await supabase
@@ -88,17 +93,19 @@ console.log("INTERVALO:", data?.intervalo);
         .limit(1);
 
     if (erroConsulta) {
-      console.log(erroConsulta);
-      alert("Erro ao verificar disponibilidade.");
-      return;
-    }
+  console.log(erroConsulta);
+  alert("Erro ao verificar disponibilidade.");
+  setSalvando(false);
+  return;
+}
 
     if (existente && existente.length > 0) {
-      alert(
-        "Este horário já está ocupado. Escolha outro horário."
-      );
-      return;
-    }
+  alert(
+    "Este horário já está ocupado. Escolha outro horário."
+  );
+  setSalvando(false);
+  return;
+}
    const { error } = await supabase
   .from("agendamentos")
   .insert([
@@ -115,21 +122,25 @@ console.log("INTERVALO:", data?.intervalo);
     },
   ]);
 if (error) {
-      console.log(error);
-      alert(JSON.stringify(error));
-      return;
-    }
+  console.log(error);
+  alert(JSON.stringify(error));
+  setSalvando(false);
+  return;
+}
 
-    const mensagem = `Olá ${nome}!
+    const [ano, mes, dia] = data.split("-");
+const dataFormatada = `${dia}/${mes}/${ano}`;
 
-Seu agendamento foi confirmado 🚗✨
+const horaFormatada = hora.substring(0, 5);
+const mensagem = `Olá ${nome}!
+
+Seu agendamento foi CONFIRMADO
 
 Serviço: ${servico}
-Data: ${data}
-Hora: ${hora}
-Telefone: ${telefone}
+Data: ${dataFormatada}
+Hora: ${horaFormatada}
 
-Obrigado por escolher a LavaTop!`;
+Aguardamos você!`;
 
     const numero = telefone.replace(/\D/g, "");
 
@@ -140,6 +151,7 @@ Obrigado por escolher a LavaTop!`;
     window.open(url, "_blank");
 
     alert("Agendamento realizado com sucesso!");
+    setSalvando(false);
 
     setNome("");
     setTelefone("");
@@ -213,11 +225,12 @@ Obrigado por escolher a LavaTop!`;
           </select>
 
           <button
-            onClick={agendar}
-            className="bg-cyan-500 hover:bg-cyan-400 transition p-4 rounded-xl text-xl font-bold"
-          >
-            Confirmar Agendamento
-          </button>
+  onClick={agendar}
+  disabled={salvando}
+  className="bg-cyan-500 hover:bg-cyan-400 transition p-4 rounded-xl text-xl font-bold disabled:opacity-50"
+>
+  {salvando ? "Salvando..." : "Confirmar Agendamento"}
+</button>
         </div>
       </div>
     </main>

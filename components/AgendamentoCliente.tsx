@@ -101,9 +101,13 @@ const horarios = gerarHorarios();
       return;
     }
 
-    const { data: agendamentos, error } = await supabase
+    const {
+  data: agendamentos,
+  error,
+} = await supabase
   .from("agendamentos")
   .select("hora_agendamento, duracao_servico")
+  .eq("empresa_id", empresa.id)
   .eq("data_agendamento", data)
   .neq("status", "Cancelado");
 
@@ -187,12 +191,13 @@ setHorariosOcupados(ocupados);
   setLoading(true);
 
   const { data: existe } = await supabase
-    .from("agendamentos")
-    .select("id")
-    .eq("data_agendamento", data)
-    .eq("hora_agendamento", horario)
-    .neq("status", "Cancelado")
-    .limit(1);
+  .from("agendamentos")
+  .select("id")
+  .eq("empresa_id", empresa.id)
+  .eq("data_agendamento", data)
+  .eq("hora_agendamento", horario)
+  .neq("status", "Cancelado")
+  .limit(1);
 
   if (existe && existe.length > 0) {
     alert(
