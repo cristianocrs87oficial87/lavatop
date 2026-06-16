@@ -148,6 +148,8 @@ const horaFormatada =
 Seu agendamento foi CONFIRMADO ✅
 
 Serviço: ${agendamento.servico}
+Data: ${dataFormatada}
+Hora: ${horaFormatada}
 
 Aguardamos você! 🚗`;
   }
