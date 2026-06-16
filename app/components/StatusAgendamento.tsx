@@ -125,7 +125,14 @@ if (novoStatus === "Finalizado") {
 
   await atualizarFidelidade(agendamento);
 }
+const [ano, mes, dia] =
+  agendamento.data_agendamento.split("-");
 
+const dataFormatada =
+  `${dia}/${mes}/${ano}`;
+
+const horaFormatada =
+  String(agendamento.hora_agendamento).substring(0, 5);
 let mensagem = "";
 
       if (novoStatus === "Confirmado") {
@@ -134,8 +141,8 @@ let mensagem = "";
 Seu agendamento foi CONFIRMADO ✅
 
 Serviço: ${agendamento.servico}
-Data: ${agendamento.data_agendamento}
-Horário: ${agendamento.hora_agendamento}
+Data: ${dataFormatada}
+Horário: ${horaFormatada}
 
 Aguardamos você! 🚗`;
       }
