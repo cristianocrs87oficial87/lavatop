@@ -10,7 +10,6 @@ export default function Configuracoes() {
   const [telefone, setTelefone] = useState("");
   const [abre, setAbre] = useState("08:00");
   const [fecha, setFecha] = useState("18:00");
-  const [intervalo, setIntervalo] = useState(60);
   const [logoUrl, setLogoUrl] = useState("");
 const [bannerUrl, setBannerUrl] = useState("");
 const [corPrincipal, setCorPrincipal] = useState("#06b6d4");
@@ -112,7 +111,6 @@ async function uploadBanner(
     setTelefone(empresa.telefone || "");
     setAbre(empresa.abre || "08:00");
     setFecha(empresa.fecha || "18:00");
-    setIntervalo(empresa.intervalo || 60);
     setLogoUrl(empresa.logo_url || "");
 setBannerUrl(empresa.banner_url || "");
 setCorPrincipal(
@@ -253,16 +251,13 @@ async function salvar() {
   telefone,
   abre,
   fecha,
-  intervalo,
 
-  dias_funcionamento:
-    diasFuncionamento,
+  dias_funcionamento: diasFuncionamento,
 
   logo_url: logoUrl,
   banner_url: bannerUrl,
   cor_principal: corPrincipal,
-  mensagem_cliente:
-    mensagemCliente,
+  mensagem_cliente: mensagemCliente,
 
   usuario_id: user.id,
 })
@@ -277,17 +272,13 @@ async function salvar() {
     telefone,
     abre,
     fecha,
-    intervalo,
 
-    dias_funcionamento:
-      diasFuncionamento,
+    dias_funcionamento: diasFuncionamento,
 
     logo_url: logoUrl,
     banner_url: bannerUrl,
-    cor_principal:
-      corPrincipal,
-    mensagem_cliente:
-      mensagemCliente,
+    cor_principal: corPrincipal,
+    mensagem_cliente: mensagemCliente,
 
     usuario_id: user.id,
   },
@@ -391,32 +382,6 @@ router.push("/admin");
           className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
         />
 
-        <label className="block mb-2 font-bold">
-          Intervalo dos Agendamentos
-        </label>
-
-        <select
-          value={intervalo}
-          onChange={(e) =>
-            setIntervalo(
-              Number(e.target.value)
-            )
-          }
-          className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
-        >
-          <option value={30}>
-            30 minutos
-          </option>
-          <option value={60}>
-            60 minutos
-          </option>
-          <option value={90}>
-            90 minutos
-          </option>
-          <option value={120}>
-            120 minutos
-          </option>
-        </select>
 
         <label className="block mb-4 font-bold text-xl">
           Dias de Funcionamento
