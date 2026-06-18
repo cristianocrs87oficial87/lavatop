@@ -1,238 +1,475 @@
-"use client";
-
-import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase";
+import Link from "next/link";
 
 export default function Home() {
-  const [nome, setNome] = useState("");
-  const [telefone, setTelefone] = useState("");
-  const [servico, setServico] = useState("Lavagem Completa");
-  const [data, setData] = useState("");
-  const [hora, setHora] = useState("");
-  const [salvando, setSalvando] = useState(false);
-
-  const [horariosDisponiveis, setHorariosDisponiveis] = useState<string[]>([]);
-
-  useEffect(() => {
-    carregarConfiguracoes();
-  }, []);
-
-  async function carregarConfiguracoes() {
-  const { data, error } = await supabase
-    .from("empresas")
-    .select("*")
-    .limit(1)
-    .single();
-
-  console.log("EMPRESA:", data);
-  console.log("ERRO:", error);
-  console.log("ABRE:", data?.abre);
-console.log("FECHA:", data?.fecha);
-console.log("INTERVALO:", data?.intervalo);
-
-  if (!data) return;
-
-  gerarHorarios(
-    data.abre || "08:00",
-    data.fecha || "18:00",
-    data.intervalo || 60
-  );
-}
-
-  function gerarHorarios(
-    abertura: string,
-    fechamento: string,
-    intervalo: number
-  ) {
-    const horarios: string[] = [];
-
-    const [horaAbre, minAbre] =
-      abertura.split(":").map(Number);
-
-    const [horaFecha, minFecha] =
-      fechamento.split(":").map(Number);
-
-    let atual = horaAbre * 60 + minAbre;
-
-    const fim = horaFecha * 60 + minFecha;
-
-    while (atual <= fim) {
-      const horas = String(
-        Math.floor(atual / 60)
-      ).padStart(2, "0");
-
-      const minutos = String(
-        atual % 60
-      ).padStart(2, "0");
-
-      horarios.push(`${horas}:${minutos}`);
-
-      atual += intervalo;
-    }
-
-    console.log("HORARIOS GERADOS:", horarios);
-    setHorariosDisponiveis(horarios);
-  }
-
-  async function agendar() {
-  if (salvando) return;
-
-  setSalvando(true);
-    if (!nome || !telefone || !data || !hora) {
-      alert("Preencha todos os campos!");
-  setSalvando(false);
-  return;
-}
-
-    const { data: existente, error: erroConsulta } =
-      await supabase
-        .from("agendamentos")
-        .select("id")
-        .eq("data_agendamento", data)
-        .eq("hora_agendamento", `${hora}:00`)
-        .limit(1);
-
-    if (erroConsulta) {
-  console.log(erroConsulta);
-  alert("Erro ao verificar disponibilidade.");
-  setSalvando(false);
-  return;
-}
-
-    if (existente && existente.length > 0) {
-  alert(
-    "Este horário já está ocupado. Escolha outro horário."
-  );
-  setSalvando(false);
-  return;
-}
-   const { error } = await supabase
-  .from("agendamentos")
-  .insert([
-    {
-      cliente: nome,
-      telefone,
-      servico,
-      data_agendamento: data,
-      hora_agendamento: `${hora}:00`,
-      status: "Pendente",
-
-      usuario_id:
-        "ba61d073-1067-4d0d-a826-4239a94d58e1",
-    },
-  ]);
-if (error) {
-  console.log(error);
-  alert(JSON.stringify(error));
-  setSalvando(false);
-  return;
-}
-
-    const [ano, mes, dia] = data.split("-");
-const dataFormatada = `${dia}/${mes}/${ano}`;
-
-const horaFormatada = hora.substring(0, 5);
-const mensagem = `Olá ${nome}!
-
-Seu agendamento foi CONFIRMADO
-
-Serviço: ${servico}
-Data: ${dataFormatada}
-Hora: ${horaFormatada}
-
-Aguardamos você!`;
-
-    const numero = telefone.replace(/\D/g, "");
-
-    const url = `https://wa.me/55${numero}?text=${encodeURIComponent(
-      mensagem
-    )}`;
-
-    window.open(url, "_blank");
-
-    alert("Agendamento realizado com sucesso!");
-    setSalvando(false);
-
-    setNome("");
-    setTelefone("");
-    setServico("Lavagem Completa");
-    setData("");
-    setHora("");
-  }
-
   return (
-    <main className="min-h-screen bg-black flex items-center justify-center p-10">
-      <div className="bg-zinc-900 p-10 rounded-3xl w-[500px]">
-        <h1 className="text-6xl font-bold text-cyan-400 text-center">
-          LavaTop
-        </h1>
+    <main className="bg-black text-white">
+      <header className="fixed top-0 left-0 right-0 z-50 bg-black/80 backdrop-blur border-b border-zinc-800">
+  <div className="max-w-7xl mx-auto flex justify-between items-center px-6 py-4">
 
-        <p className="text-white text-center mt-4 mb-10">
-          Sistema inteligente de agendamento
+    <h1 className="text-3xl font-extrabold">
+  Lava<span className="text-cyan-400">Top</span>
+</h1>
+
+    <nav className="flex items-center gap-8">
+
+      <a href="#beneficios" className="hover:text-cyan-400">
+        Recursos
+      </a>
+
+      <a href="#precos" className="hover:text-cyan-400">
+        Preços
+      </a>
+
+      <Link
+        href="/login"
+        className="hover:text-cyan-400"
+      >
+        Entrar
+      </Link>
+
+      <Link
+        href="/cadastro"
+        className="bg-cyan-500 hover:bg-cyan-600 px-5 py-2 rounded-lg font-semibold"
+      >
+        Criar Conta
+      </Link>
+    
+
+    </nav>
+
+  </div>
+</header>
+
+      {/* HERO */}
+      <section className="min-h-screen flex items-center justify-center px-6 pt-24">
+        <div className="max-w-7xl mx-auto grid md:grid-cols-2 gap-20 items-center">
+
+          <div>
+            <span className="bg-cyan-500/20 text-cyan-400 px-4 py-2 rounded-full text-sm">
+              Sistema para Lava-Rápidos
+            </span>
+
+            <h1 className="text-5xl md:text-7xl font-bold mt-6">
+              Seu lava-rápido agendando clientes
+              <span className="text-cyan-400"> 24 horas por dia</span>
+            </h1>
+
+            <p className="text-gray-400 text-xl mt-6">
+              Receba agendamentos online, fidelize clientes e aumente seu faturamento sem depender apenas do WhatsApp.
+            </p>
+
+            <div className="flex gap-4 mt-8">
+              <Link
+                href="/cadastro"
+                className="bg-cyan-500 hover:bg-cyan-600 px-8 py-4 rounded-xl font-bold"
+              >
+                Criar Conta
+              </Link>
+
+              <Link
+                href="/login"
+                className="border border-cyan-500 px-8 py-4 rounded-xl"
+              >
+                Entrar
+              </Link>
+            </div>
+          </div>
+
+          <div>
+            <div className="flex justify-center">
+  <img
+    src="/dashboard.png"
+    alt="Dashboard LavaTop"
+    className="w-full scale-125 rounded-3xl shadow-2xl border border-cyan-500"
+  />
+</div>
+          </div>
+
+        </div>
+      </section>
+
+      {/* BENEFÍCIOS */}
+      {/* ESTATÍSTICAS */}
+<section id="beneficios" className="py-12 border-t border-zinc-800 border-b border-zinc-800">
+  <div className="max-w-6xl mx-auto px-6">
+
+    <div className="grid md:grid-cols-4 gap-8 text-center">
+
+      <div>
+        <h3 className="text-4xl font-bold text-cyan-400">
+          24h
+        </h3>
+        <p className="text-gray-400 mt-2">
+          Agendamento Online
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-4xl font-bold text-cyan-400">
+          100%
+        </h3>
+        <p className="text-gray-400 mt-2">
+          Na Nuvem
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-4xl font-bold text-cyan-400">
+          PIX
+        </h3>
+        <p className="text-gray-400 mt-2">
+          Pagamento Integrado
+        </p>
+      </div>
+
+      <div>
+        <h3 className="text-4xl font-bold text-cyan-400">
+          ⭐
+        </h3>
+        <p className="text-gray-400 mt-2">
+          Fidelidade Integrada
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+</section>
+      <section id="beneficios" className="py-24 px-6 bg-zinc-950">
+        <div className="max-w-6xl mx-auto">
+
+          <h2 className="text-4xl font-bold text-center mb-16">
+            Tudo que seu lava-rápido precisa
+          </h2>
+
+          <div className="grid md:grid-cols-3 gap-8">
+
+            <div className="bg-zinc-900 p-8 rounded-2xl">
+              <h3 className="text-cyan-400 text-xl font-bold">
+                📅 Agendamento Online
+              </h3>
+              <p className="mt-4 text-gray-400">
+                Seus clientes agendam sozinhos 24 horas por dia.
+              </p>
+            </div>
+
+            <div className="bg-zinc-900 p-8 rounded-2xl">
+              <h3 className="text-cyan-400 text-xl font-bold">
+                ⭐ Fidelidade
+              </h3>
+              <p className="mt-4 text-gray-400">
+                Acumule pontos e faça seus clientes voltarem mais vezes.
+              </p>
+            </div>
+
+            <div className="bg-zinc-900 p-8 rounded-2xl">
+              <h3 className="text-cyan-400 text-xl font-bold">
+                📱 WhatsApp
+              </h3>
+              <p className="mt-4 text-gray-400">
+                Compartilhe seu link de agendamento facilmente.
+              </p>
+            </div>
+
+            <div className="bg-zinc-900 p-8 rounded-2xl">
+              <h3 className="text-cyan-400 text-xl font-bold">
+                💰 PIX
+              </h3>
+              <p className="mt-4 text-gray-400">
+                Receba pagamentos rápidos e seguros.
+              </p>
+            </div>
+
+            <div className="bg-zinc-900 p-8 rounded-2xl">
+              <h3 className="text-cyan-400 text-xl font-bold">
+                📊 Gestão
+              </h3>
+              <p className="mt-4 text-gray-400">
+                Controle agendamentos e clientes em um único lugar.
+              </p>
+            </div>
+
+            <div className="bg-zinc-900 p-8 rounded-2xl">
+              <h3 className="text-cyan-400 text-xl font-bold">
+                🔒 Segurança
+              </h3>
+              <p className="mt-4 text-gray-400">
+                Dados protegidos com Supabase e RLS.
+              </p>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* COMO FUNCIONA */}
+      <section id="precos" className="py-24 px-6">
+        <div className="max-w-6xl mx-auto">
+
+          <h2 className="text-4xl font-bold text-center mb-16">
+            Como funciona
+          </h2>
+
+          <div className="grid md:grid-cols-5 gap-6 text-center">
+
+            <div>
+              <div className="text-5xl">1️⃣</div>
+              <p className="mt-4">Cliente acessa o link</p>
+            </div>
+
+            <div>
+              <div className="text-5xl">2️⃣</div>
+              <p className="mt-4">Escolhe o serviço</p>
+            </div>
+
+            <div>
+              <div className="text-5xl">3️⃣</div>
+              <p className="mt-4">Seleciona horário</p>
+            </div>
+
+            <div>
+              <div className="text-5xl">4️⃣</div>
+              <p className="mt-4">Confirma o agendamento</p>
+            </div>
+
+            <div>
+              <div className="text-5xl">5️⃣</div>
+              <p className="mt-4">Você recebe o cliente</p>
+            </div>
+
+          </div>
+
+        </div>
+      </section>
+
+      {/* PREÇO */}
+      <section id="precos" className="py-24 px-6 bg-zinc-950">
+
+        <div className="max-w-xl mx-auto">
+
+          <div className="bg-zinc-900 rounded-3xl p-10 border border-cyan-500">
+
+            <h2 className="text-4xl font-bold text-center">
+              Plano Premium
+            </h2>
+
+            <div className="text-center mt-6">
+
+  <p className="text-gray-400 text-lg mb-2">
+    7 Dias Grátis
+  </p>
+
+  <span className="text-6xl font-bold text-cyan-400">
+    R$49,90
+  </span>
+
+  <p className="text-gray-400 mt-2">
+    por mês
+  </p>
+
+  <div className="mt-4 text-base text-gray-300 font-medium">
+    <p>✓ Sem taxa de adesão</p>
+    <p>✓ Cancele quando quiser</p>
+  </div>
+
+</div>
+
+            <ul className="space-y-4 mt-10">
+              <li>✔ Agendamentos ilimitados</li>
+              <li>✔ Programa fidelidade</li>
+              <li>✔ Painel administrativo</li>
+              <li>✔ Compartilhamento WhatsApp</li>
+              <li>✔ Atualizações futuras</li>
+            </ul>
+
+            <Link
+              href="/cadastro"
+              className="block text-center bg-cyan-500 hover:bg-cyan-600 mt-10 py-4 rounded-xl font-bold"
+            >
+              Começar Teste Grátis
+            </Link>
+            <p className="mt-6 text-gray-400">
+  ✅ 7 Dias Grátis • ✅ Sem Taxa de Adesão • ✅ Cancelamento Livre
+</p>
+
+          </div>
+
+        </div>
+
+      </section>
+    
+{/* DEPOIMENTOS */}
+<section className="py-24 px-6">
+
+  <div className="max-w-6xl mx-auto">
+
+    <h2 className="text-4xl font-bold text-center mb-16">
+      Por que escolher o LavaTop
+    </h2>
+
+    <div className="grid md:grid-cols-3 gap-8">
+
+      <div className="bg-zinc-900 p-6 rounded-2xl">
+        <p>
+          Receba agendamentos 24 horas por dia.
         </p>
 
-        <div className="flex flex-col gap-4">
-          <input
-            type="text"
-            placeholder="Seu nome"
-            value={nome}
-            onChange={(e) => setNome(e.target.value)}
-            className="p-4 rounded-xl bg-zinc-800 text-white"
-          />
-
-          <input
-            type="text"
-            placeholder="Telefone"
-            value={telefone}
-            onChange={(e) => setTelefone(e.target.value)}
-            className="p-4 rounded-xl bg-zinc-800 text-white"
-          />
-
-          <select
-            value={servico}
-            onChange={(e) => setServico(e.target.value)}
-            className="p-4 rounded-xl bg-zinc-800 text-white"
-          >
-            <option>Lavagem Completa</option>
-            <option>Higienização</option>
-            <option>Polimento</option>
-          </select>
-
-          <input
-            type="date"
-            value={data}
-            onChange={(e) => setData(e.target.value)}
-            className="p-4 rounded-xl bg-zinc-800 text-white"
-          />
-
-          <select
-            value={hora}
-            onChange={(e) => setHora(e.target.value)}
-            className="p-4 rounded-xl bg-zinc-800 text-white"
-          >
-            <option value="">
-              Escolha um horário
-            </option>
-
-            {horariosDisponiveis.map((horario) => (
-              <option
-                key={horario}
-                value={horario}
-              >
-                {horario}
-              </option>
-            ))}
-          </select>
-
-          <button
-  onClick={agendar}
-  disabled={salvando}
-  className="bg-cyan-500 hover:bg-cyan-400 transition p-4 rounded-xl text-xl font-bold disabled:opacity-50"
->
-  {salvando ? "Salvando..." : "Confirmar Agendamento"}
-</button>
-        </div>
+        <p className="mt-4 text-cyan-400 font-bold">
+      
+        </p>
       </div>
+
+      <div className="bg-zinc-900 p-6 rounded-2xl">
+        <p>
+          Fidelize clientes automaticamente.
+        </p>
+
+        <p className="mt-4 text-cyan-400 font-bold">
+          
+        </p>
+      </div>
+
+      <div className="bg-zinc-900 p-6 rounded-2xl">
+        <p>
+          Organize seu lava-rápido em poucos minutos.
+        </p>
+
+        <p className="mt-4 text-cyan-400 font-bold">
+          
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+{/* FAQ */}
+<section className="py-24 px-6 bg-zinc-950">
+
+  <div className="max-w-4xl mx-auto">
+
+    <h2 className="text-4xl font-bold text-center mb-16">
+      Perguntas Frequentes
+    </h2>
+
+    <div className="space-y-6">
+
+      <div className="bg-zinc-900 p-6 rounded-2xl">
+        <h3 className="text-cyan-400 font-bold text-xl">
+          Preciso instalar algo?
+        </h3>
+
+        <p className="text-gray-400 mt-2">
+          Não. O LavaTop funciona diretamente pelo navegador.
+        </p>
+      </div>
+
+      <div className="bg-zinc-900 p-6 rounded-2xl">
+        <h3 className="text-cyan-400 font-bold text-xl">
+          Funciona no celular?
+        </h3>
+
+        <p className="text-gray-400 mt-2">
+          Sim. Você pode usar pelo celular, tablet ou computador.
+        </p>
+      </div>
+
+      <div className="bg-zinc-900 p-6 rounded-2xl">
+        <h3 className="text-cyan-400 font-bold text-xl">
+          Posso cancelar quando quiser?
+        </h3>
+
+        <p className="text-gray-400 mt-2">
+          Sim. Não existe fidelidade contratual.
+        </p>
+      </div>
+
+      <div className="bg-zinc-900 p-6 rounded-2xl">
+        <h3 className="text-cyan-400 font-bold text-xl">
+          Tem programa fidelidade?
+        </h3>
+
+        <p className="text-gray-400 mt-2">
+          Sim. O sistema possui programa fidelidade integrado.
+        </p>
+      </div>
+
+      <div className="bg-zinc-900 p-6 rounded-2xl">
+        <h3 className="text-cyan-400 font-bold text-xl">
+          Como meus clientes fazem agendamentos?
+        </h3>
+
+        <p className="text-gray-400 mt-2">
+          Basta compartilhar seu link exclusivo de agendamento.
+        </p>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+ {/* CTA FINAL */}
+<section className="py-24 px-6 text-center">
+
+  <div className="max-w-4xl mx-auto">
+
+    <h2 className="text-5xl font-bold">
+      Pronto para modernizar seu lava-rápido?
+    </h2>
+
+    <p className="text-gray-400 text-xl mt-6">
+      Receba agendamentos online 24 horas por dia,
+      organize sua operação e fidelize seus clientes.
+    </p>
+
+    <Link
+      href="/cadastro"
+      className="inline-block bg-cyan-500 hover:bg-cyan-600 mt-10 px-10 py-5 rounded-xl font-bold text-xl"
+    >
+      Começar Teste Grátis
+    </Link>
+    <p className="mt-6 text-gray-400">
+  ✅ 7 Dias Grátis • ✅ Sem Taxa de Adesão • ✅ Cancelamento Livre
+</p>
+
+<a
+  href="https://wa.me/5512996063041"
+  target="_blank"
+  className="block mt-4 text-cyan-400 hover:text-cyan-300"
+>
+  Dúvidas? Fale conosco pelo WhatsApp
+</a>
+
+  </div>
+
+</section>
+<footer className="border-t border-zinc-800 py-10 text-center text-gray-500">
+
+  <h3 className="text-white font-bold text-xl mb-4">
+    Lava<span className="text-cyan-400">Top</span>
+  </h3>
+
+  <p>
+    Agendamentos • Fidelidade • WhatsApp • PIX • Multiempresa
+  </p>
+
+  <p className="mt-3 text-sm">
+    © 2026 LavaTop. Todos os direitos reservados.
+  </p>
+
+</footer>
+<a
+  href="https://wa.me/5512996063041?text=Olá!%20Gostaria%20de%20conhecer%20o%20LavaTop."
+  target="_blank"
+  rel="noopener noreferrer"
+  className="fixed bottom-6 right-6 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-full shadow-lg z-50 font-bold"
+>
+  💬 WhatsApp
+</a>
     </main>
   );
 }

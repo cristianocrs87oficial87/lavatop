@@ -40,9 +40,9 @@ export async function GET(request: Request) {
     );
 
     const valor =
-      plano === "anual"
-        ? 2.0 // depois trocar para 497
-        : 2.0; // depois trocar para 49.99
+  plano === "anual"
+    ? 497.00
+    : 49.90;
 
     const response = await fetch(
       "https://portal.pay2m.com.br/api/v1/pix/qrcode",

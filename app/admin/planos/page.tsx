@@ -1,5 +1,6 @@
 "use client";
 
+import { useRouter } from "next/navigation";
 import { useState, useEffect } from "react";
 import { supabase } from "@/lib/supabase";
 import { QRCodeSVG } from "qrcode.react";
@@ -11,6 +12,7 @@ const [premiumAtivado, setPremiumAtivado] = useState(false);
 
 const [premium, setPremium] = useState(false);
 const [premiumAte, setPremiumAte] = useState<string | null>(null);
+const router = useRouter();
 
   async function gerarPixMensal() {
     try {
@@ -134,7 +136,12 @@ useEffect(() => {
 
   setPremium(true);
 
+
   clearInterval(interval);
+
+  setTimeout(() => {
+    router.push("/admin");
+  }, 3000);
 }
     } catch (error) {
       console.log(error);
@@ -290,8 +297,12 @@ useEffect(() => {
     </h3>
 
     <p className="mt-2">
-      Seu plano já está ativo e liberado.
-    </p>
+  Seu plano já está ativo e liberado.
+</p>
+
+<p className="mt-2 font-bold">
+  Redirecionando para o painel...
+</p>
   </div>
 )}
         </div>

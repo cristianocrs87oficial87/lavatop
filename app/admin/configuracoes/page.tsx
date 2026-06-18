@@ -8,12 +8,15 @@ export default function Configuracoes() {
   const router = useRouter();
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
+  const [whatsapp, setWhatsapp] = useState("");
   const [abre, setAbre] = useState("08:00");
   const [fecha, setFecha] = useState("18:00");
   const [logoUrl, setLogoUrl] = useState("");
 const [bannerUrl, setBannerUrl] = useState("");
 const [corPrincipal, setCorPrincipal] = useState("#06b6d4");
-const [mensagemCliente, setMensagemCliente] = useState("");
+const [mensagemCliente, setMensagemCliente] = useState(
+  "🚘 Especialistas em estética automotiva.\n\nOferecemos lavagem completa, higienização interna, cristalização de pintura, polimento, limpeza técnica, hidratação de couro e diversos serviços para manter seu veículo limpo, protegido e valorizado.\n\nAgende seu atendimento de forma rápida e escolha o melhor horário para cuidar do seu veículo."
+);
 
   const [diasFuncionamento, setDiasFuncionamento] = useState<string[]>([
     "segunda",
@@ -23,6 +26,7 @@ const [mensagemCliente, setMensagemCliente] = useState("");
     "sexta",
   ]);
   const [servicos, setServicos] = useState<any[]>([]);
+  const [editandoId, setEditandoId] = useState<number | null>(null);
 const [novoServico, setNovoServico] = useState("");
 const [novoPreco, setNovoPreco] = useState("");
 const [novaDuracao, setNovaDuracao] = useState("");
@@ -109,6 +113,7 @@ async function uploadBanner(
 
     setNome(empresa.nome || "");
     setTelefone(empresa.telefone || "");
+    setWhatsapp(empresa.whatsapp || "");
     setAbre(empresa.abre || "08:00");
     setFecha(empresa.fecha || "18:00");
     setLogoUrl(empresa.logo_url || "");
@@ -155,7 +160,34 @@ async function carregarServicos() {
 
   setServicos(data || []);
 }
+async function excluirServico(id: number) {
+  const confirmar = confirm(
+    "Deseja realmente excluir este serviço?"
+  );
 
+  if (!confirmar) return;
+
+  const { error } = await supabase
+    .from("servicos")
+    .delete()
+    .eq("id", id);
+
+  if (error) {
+    alert("Erro ao excluir serviço.");
+    return;
+  }
+
+  setServicos(
+    servicos.filter((s) => s.id !== id)
+  );
+}
+function editarServico(servico: any) {
+  setEditandoId(servico.id);
+
+  setNovoServico(servico.nome);
+  setNovoPreco(servico.preco);
+  setNovaDuracao(servico.duracao);
+}
 async function adicionarServico() {
   const {
     data: { user },
@@ -183,7 +215,21 @@ async function adicionarServico() {
     return;
   }
 
-  const { error } = await supabase
+  let error;
+
+if (editandoId) {
+  const resultado = await supabase
+    .from("servicos")
+    .update({
+      nome: novoServico,
+      preco: Number(novoPreco),
+      duracao: Number(novaDuracao),
+    })
+    .eq("id", editandoId);
+
+  error = resultado.error;
+} else {
+  const resultado = await supabase
     .from("servicos")
     .insert({
       empresa_id: empresa.id,
@@ -191,6 +237,9 @@ async function adicionarServico() {
       preco: Number(novoPreco),
       duracao: Number(novaDuracao),
     });
+
+  error = resultado.error;
+}
 
   if (error) {
   console.log(error);
@@ -209,6 +258,7 @@ async function adicionarServico() {
   setNovoServico("");
 setNovoPreco("");
 setNovaDuracao("");
+setEditandoId(null);
 
 carregarServicos();
 }
@@ -249,6 +299,7 @@ async function salvar() {
           .update({
   nome,
   telefone,
+  whatsapp,
   abre,
   fecha,
 
@@ -270,6 +321,7 @@ async function salvar() {
   {
     nome,
     telefone,
+    whatsapp,
     abre,
     fecha,
 
@@ -546,8 +598,12 @@ router.push("/admin");
 />
 
 <label className="block mb-2 font-bold">
-  Mensagem para Clientes
+  Descrição da Empresa
 </label>
+
+<p className="text-sm text-gray-400 mb-2">
+  Esta descrição será exibida para seus clientes na página de agendamento.
+</p>
 
 <textarea
   value={mensagemCliente}
@@ -555,6 +611,19 @@ router.push("/admin");
     setMensagemCliente(e.target.value)
   }
   rows={4}
+  className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
+/>
+<label className="block mb-2 font-bold">
+  WhatsApp da Empresa
+</label>
+
+<input
+  type="text"
+  value={whatsapp}
+  onChange={(e) =>
+    setWhatsapp(e.target.value)
+  }
+  placeholder="(12) 99123-4567"
   className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
 />
 
@@ -568,15 +637,33 @@ router.push("/admin");
   {servicos.map((s) => (
     <div
       key={s.id}
-      className="bg-zinc-800 p-3 rounded-lg flex justify-between"
+      className="bg-zinc-800 p-3 rounded-lg"
     >
-      <span>
-        {s.nome} - R$ {s.preco}
-      </span>
+      <div className="flex justify-between">
+        <span>
+          {s.nome} - R$ {s.preco}
+        </span>
 
-      <span>
-        {s.duracao} min
-      </span>
+        <span>
+          {s.duracao} min
+        </span>
+      </div>
+
+      <div className="flex gap-2 mt-3">
+        <button
+          onClick={() => editarServico(s)}
+          className="bg-yellow-500 hover:bg-yellow-600 text-black px-3 py-1 rounded"
+        >
+          ✏️ Editar
+        </button>
+
+        <button
+          onClick={() => excluirServico(s.id)}
+          className="bg-red-600 hover:bg-red-700 text-white px-3 py-1 rounded"
+        >
+          🗑️ Excluir
+        </button>
+      </div>
     </div>
   ))}
 </div>
@@ -607,9 +694,15 @@ router.push("/admin");
 
 <button
   onClick={adicionarServico}
-  className="bg-green-600 hover:bg-green-700 px-4 py-2 rounded-lg font-bold mb-6"
+  className={`px-4 py-2 rounded-lg font-bold mb-6 ${
+    editandoId
+      ? "bg-yellow-500 hover:bg-yellow-600 text-black"
+      : "bg-green-600 hover:bg-green-700 text-white"
+  }`}
 >
-  Adicionar Serviço
+  {editandoId
+    ? "💾 Atualizar Serviço"
+    : "➕ Adicionar Serviço"}
 </button>
 
 <button

@@ -86,6 +86,19 @@ const { data, error } = await supabase
     await supabase.auth.signOut();
     router.push("/login");
   }
+  async function copiarLinkAgendamento() {
+  if (!empresa?.id) {
+    alert("Empresa não encontrada.");
+    return;
+  }
+
+  const link =
+    `${window.location.origin}/agendamento/${empresa.id}`;
+
+  await navigator.clipboard.writeText(link);
+
+  alert("Link copiado!");
+}
 
   async function excluirAgendamento(id: number) {
     const confirmar = confirm(
@@ -421,24 +434,30 @@ const cancelados = agendamentos.filter(
   <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-700 h-fit sticky top-6">
 
     <h3 className="text-2xl font-bold mb-2">
-      {empresa?.premium ? "Premium" : "Teste Grátis"}
-    </h3>
+  {empresa?.premium ? "🟢 Premium" : "🟡 Teste Gratuito"}
+</h3>
 
-    <p className="text-zinc-400 mb-6">
-      Painel de recursos
-    </p>
+<p className="text-zinc-400 mb-6">
+  Painel de recursos
+</p>
 
-    <div className="space-y-3">
+<h4 className="text-lg font-bold text-white mb-4">
+  Recursos da Conta
+</h4>
 
-      <Link href="/admin/planos">
-        <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-xl">
-          🚀 Upgrade Premium
-        </button>
-      </Link>
+<div className="space-y-3">
+
+      {!empresa?.premium && (
+  <Link href="/admin/planos">
+    <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-xl mb-6">
+      🚀 Assinar Premium
+    </button>
+  </Link>
+)}
 
       <div className="bg-zinc-800 border border-cyan-500 p-4 rounded-xl">
         <h4 className="font-bold text-cyan-400 mb-2">
-          🚀 Programa de Indicações
+          💰 Ganhe 1 mês grátis por indicação
         </h4>
 
         <p className="text-sm text-zinc-300 mb-3">
@@ -466,10 +485,12 @@ const cancelados = agendamentos.filter(
         </button>
       </Link>
 
-      <button className="w-full bg-zinc-700 hover:bg-zinc-600 text-white font-bold py-3 rounded-xl">
-        📋 Copiar Link de Agendamento
-      </button>
-
+      <button
+  onClick={copiarLinkAgendamento}
+  className="w-full bg-zinc-700 hover:bg-zinc-600 text-white font-bold py-3 rounded-xl"
+>
+  📋 Copiar Link de Agendamento
+</button>
       <Link href="/admin/configuracoes">
         <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
           ⚙️ Configurar Empresa
