@@ -25,7 +25,7 @@ export async function GET(request: Request) {
     }
 
     const tokenResponse = await fetch(
-  `${process.env.NEXT_PUBLIC_SITE_URL}/api/pay2m/token`
+  new URL("/api/pay2m/token", request.url)
 );
 
     const tokenData =
