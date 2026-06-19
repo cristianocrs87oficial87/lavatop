@@ -1,16 +1,16 @@
 import { NextResponse } from "next/server";
-import { supabase } from "@/lib/supabase";
+import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function GET() {
     console.log("CHECK-PAYMENTS NOVO ARQUIVO");
   try {
-    const { data: pagamentos, error } = await supabase
+    const { data: pagamentos, error } = await supabaseAdmin
       .from("premium_pagamentos")
       .select("*")
       .eq("status", "awaiting_payment");
 
     if (error) {
-      console.error("ERRO SUPABASE:", error);
+      console.error("ERRO supabaseAdmin:", error);
 
       return NextResponse.json(
         {
@@ -58,7 +58,7 @@ export async function GET() {
           );
 
           const { error: pagamentoError } =
-            await supabase
+            await supabaseAdmin
               .from("premium_pagamentos")
               .update({
                 status: "paid",
@@ -83,7 +83,7 @@ export async function GET() {
           const {
             data: empresaData,
             error: empresaError,
-          } = await supabase
+          } = await supabaseAdmin
             .from("empresas")
             .update({
               premium: true,
