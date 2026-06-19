@@ -2,7 +2,6 @@ import { NextResponse } from "next/server";
 import { supabaseAdmin } from "@/lib/supabase-admin";
 
 export async function GET() {
-  throw new Error("TESTE CRISTIANO");
     console.log("CHECK-PAYMENTS NOVO ARQUIVO");
   try {
     const { data: pagamentos, error } = await supabaseAdmin
