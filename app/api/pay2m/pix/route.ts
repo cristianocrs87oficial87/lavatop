@@ -25,8 +25,8 @@ export async function GET(request: Request) {
     }
 
     const tokenResponse = await fetch(
-      "http://localhost:3000/api/pay2m/token"
-    );
+  `${process.env.NEXT_PUBLIC_SITE_URL}/api/pay2m/token`
+);
 
     const tokenData =
       await tokenResponse.json();
@@ -68,8 +68,11 @@ export async function GET(request: Request) {
       }
     );
 
-    const data =
-      await response.json();
+    const data =await response.json();
+    console.log(
+  "RETORNO PAY2M COMPLETO:",
+  JSON.stringify(data, null, 2)
+);
 
     const { error } = await supabase
       .from("premium_pagamentos")
@@ -99,7 +102,11 @@ export async function GET(request: Request) {
       data
     );
 
-    return NextResponse.json(data);
+    return NextResponse.json({
+  retorno_completo: data,
+  content: data.content,
+  reference_code: data.reference_code,
+});
   } catch (error) {
     console.log(error);
 
