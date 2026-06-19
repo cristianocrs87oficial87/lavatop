@@ -48,7 +48,13 @@ export default function PremiumPage() {
 
     try {
       const response = await fetch("/api/pay2m/pix");
-      const data = await response.json();
+const data = await response.json();
+
+console.log("RETORNO PAY2M:", data);
+
+alert(
+  JSON.stringify(data, null, 2)
+);
 
       setPix(data.content);
       setReferenceCode(data.reference_code);
@@ -56,6 +62,14 @@ export default function PremiumPage() {
       const qrImage = await QRCode.toDataURL(data.content);
 
       setQrCode(qrImage);
+      setTimeout(() => {
+  document
+    .getElementById("area-pix")
+    ?.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+}, 300);
     } catch (error) {
       console.log(error);
       alert("Erro ao gerar PIX");
@@ -71,7 +85,7 @@ export default function PremiumPage() {
 
   return (
     <main className="min-h-screen bg-black flex items-center justify-center p-10">
-      <div className="bg-zinc-900 p-10 rounded-3xl w-[700px]">
+      <div className="bg-zinc-900 p-6 rounded-3xl max-w-2xl mx-auto">
         <h1 className="text-4xl font-bold text-cyan-400 text-center">
           Plano Premium LavaTop
         </h1>
@@ -85,11 +99,16 @@ export default function PremiumPage() {
           disabled={loading}
           className="w-full mt-8 bg-cyan-500 p-4 rounded-xl font-bold"
         >
-          {loading ? "Gerando PIX..." : "Gerar PIX"}
+          {loading
+  ? "⏳ Gerando PIX..."
+  : "🚀 Gerar PIX"}
         </button>
 
         {pix && (
-          <div className="mt-8">
+  <div
+    id="area-pix"
+    className="mt-8"
+  >
             <h2 className="text-white font-bold text-center mb-4">
               Escaneie o QR Code
             </h2>
@@ -106,12 +125,9 @@ export default function PremiumPage() {
               PIX Copia e Cola
             </h2>
 
-            <textarea
-              value={pix}
-              readOnly
-              className="w-full h-40 p-4 rounded-xl bg-zinc-800 text-white"
-            />
-
+            <div className="w-full p-4 rounded-xl bg-zinc-800 text-white break-all text-xs min-h-[150px]">
+  {pix}
+</div>
             <button
               onClick={copiarPix}
               className="w-full mt-4 bg-green-600 p-4 rounded-xl font-bold text-white"
