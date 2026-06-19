@@ -86,6 +86,13 @@ export async function GET(request: Request) {
         pix_copia_cola:
           data.content,
       });
+      console.log("INSERT ERROR:", error);
+
+const { data: teste } = await supabase
+  .from("premium_pagamentos")
+  .select("*");
+
+console.log("TABELA PREMIUM:", teste);
 
     console.log(
       "ERRO SUPABASE:",
