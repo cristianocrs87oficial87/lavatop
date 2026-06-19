@@ -95,6 +95,9 @@ export async function GET() {
               pagamento.usuario_id
             )
             .select();
+            console.log("EMPRESA DATA:", empresaData);
+console.log("EMPRESA ERROR:", empresaError);
+console.log("USUARIO PROCURADO:", pagamento.usuario_id);
 
           console.log(
             "EMPRESA DATA:",
