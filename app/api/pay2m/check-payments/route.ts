@@ -41,9 +41,8 @@ export async function GET() {
         );
 
         const response = await fetch(
-          `http://localhost:3000/api/pay2m/status/${pagamento.reference_code}`
-        );
-
+  `https://lavatop.vercel.app/api/pay2m/status/${pagamento.reference_code}`
+);
         const statusData = await response.json();
 
         console.log(
