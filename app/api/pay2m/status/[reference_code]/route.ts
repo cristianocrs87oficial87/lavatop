@@ -9,13 +9,30 @@ export async function GET(
 
     console.log("REFERENCE:", reference_code);
 
-    const tokenResponse = await fetch(
-      "http://localhost:3000/api/pay2m/token"
-    );
+    const clientId = process.env.PAY2M_CLIENT_ID!;
+const clientSecret = process.env.PAY2M_CLIENT_SECRET!;
 
-    const tokenData = await tokenResponse.json();
+const credentials = Buffer.from(
+  `${clientId}:${clientSecret}`
+).toString("base64");
 
-    const accessToken = tokenData.access_token;
+const tokenResponse = await fetch(
+  "https://portal.pay2m.com.br/api/auth/generate_token",
+  {
+    method: "POST",
+    headers: {
+      Authorization: `Basic ${credentials}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      grant_type: "client_credentials",
+    }),
+  }
+);
+
+const tokenData = await tokenResponse.json();
+
+const accessToken = tokenData.access_token;
 
     const response = await fetch(
       `https://portal.pay2m.com.br/api/v1/pix/qrcode/${reference_code}`,
