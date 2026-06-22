@@ -190,7 +190,9 @@ useEffect(() => {
           </button>
 
           <p className="text-center text-yellow-400">
-            ⏳ Aguardando pagamento...
+            <p className="text-center text-yellow-400">
+  {status}
+</p>
           </p>
         </>
       )}
