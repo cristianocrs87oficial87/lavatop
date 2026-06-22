@@ -173,7 +173,7 @@ useEffect(() => {
         Pagamento PIX
       </h2>
 
-      {pix && (
+      {mostrarPix && (
         <>
           <div className="bg-white p-4 rounded-xl flex justify-center mb-4">
             <QRCodeSVG
