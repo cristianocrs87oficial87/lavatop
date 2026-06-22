@@ -7,12 +7,15 @@ import { QRCodeSVG } from "qrcode.react";
 
 export default function Planos() {
   const [pix, setPix] = useState<any>(null);
-const [status, setStatus] = useState("");
-const [premiumAtivado, setPremiumAtivado] = useState(false);
+  const [status, setStatus] = useState("");
+  const [premiumAtivado, setPremiumAtivado] = useState(false);
 
-const [premium, setPremium] = useState(false);
-const [premiumAte, setPremiumAte] = useState<string | null>(null);
-const router = useRouter();
+  const [premium, setPremium] = useState(false);
+  const [premiumAte, setPremiumAte] = useState<string | null>(null);
+
+  const [mostrarPix, setMostrarPix] = useState(false);
+
+  const router = useRouter();
 
   async function gerarPixMensal() {
     try {
@@ -32,10 +35,13 @@ const router = useRouter();
       const data = await response.json();
 
       setPix({
-        copiaecola: data.content,
-        reference_code: data.reference_code,
-      });
-      setStatus("⏳ Aguardando pagamento...");
+  copiaecola: data.content,
+  reference_code: data.reference_code,
+});
+
+setMostrarPix(true);
+
+setStatus("⏳ Aguardando pagamento...");
 setPremiumAtivado(false);
     } catch (error) {
       console.log(error);
@@ -61,10 +67,13 @@ setPremiumAtivado(false);
       const data = await response.json();
 
       setPix({
-        copiaecola: data.content,
-        reference_code: data.reference_code,
-      });
-      setStatus("⏳ Aguardando pagamento...");
+  copiaecola: data.content,
+  reference_code: data.reference_code,
+});
+
+setMostrarPix(true);
+
+setStatus("⏳ Aguardando pagamento...");
 setPremiumAtivado(false);
     } catch (error) {
       console.log(error);
@@ -155,6 +164,48 @@ useEffect(() => {
   ? new Date(premiumAte).toLocaleDateString("pt-BR")
   : null;
   return (
+    <>
+    {mostrarPix && (
+  <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50 p-4">
+    <div className="bg-zinc-900 p-6 rounded-2xl max-w-md w-full border border-cyan-500">
+
+      <h2 className="text-3xl font-bold mb-4">
+        Pagamento PIX
+      </h2>
+
+      {pix && (
+        <>
+          <div className="bg-white p-4 rounded-xl flex justify-center mb-4">
+            <QRCodeSVG
+              value={pix.copiaecola}
+              size={220}
+            />
+          </div>
+
+          <button
+            onClick={copiarPix}
+            className="w-full bg-cyan-500 text-black font-bold py-3 rounded-xl mb-3"
+          >
+            📋 Copiar PIX
+          </button>
+
+          <p className="text-center text-yellow-400">
+            ⏳ Aguardando pagamento...
+          </p>
+        </>
+      )}
+
+      <button
+        onClick={() => setMostrarPix(false)}
+        className="w-full mt-4 bg-red-600 py-3 rounded-xl"
+      >
+        Fechar
+      </button>
+
+    </div>
+  </div>
+)}
+    
     <main className="min-h-screen bg-black text-white p-10">
       <h1 className="text-5xl font-bold text-cyan-400 mb-10">
         Escolha seu Plano
@@ -250,63 +301,7 @@ useEffect(() => {
   )}
 </div>
       </div>
-
-      {pix && (
-        <div className="mt-10 bg-zinc-900 p-6 rounded-2xl">
-          <h2 className="text-3xl font-bold mb-4">
-            Pagamento PIX
-          </h2>
-
-          <p className="mb-4 text-green-400">
-            PIX gerado com sucesso
-          </p>
-          <p className="mb-4 text-yellow-400 font-bold">
-  {status}
-</p>
-
-          <div className="flex justify-center mb-6">
-  <div className="bg-white p-4 rounded-xl">
-    <QRCodeSVG
-      value={pix.copiaecola}
-      size={250}
-    />
-  </div>
-</div>
-
-<textarea
-            readOnly
-            value={pix.copiaecola}
-            className="w-full mt-4 p-4 bg-zinc-800 rounded-xl h-40"
-          />
-
-          <button
-            onClick={copiarPix}
-            
-            className="mt-4 bg-cyan-500 hover:bg-cyan-600 text-black font-bold px-6 py-3 rounded-xl"
-          >
-            📋 Copiar PIX
-          </button>
-
-          <p className="mt-4 text-sm text-zinc-400">
-            Referência: {pix.reference_code}
-          </p>
-          {premiumAtivado && (
-  <div className="mt-6 bg-green-600 p-6 rounded-xl">
-    <h3 className="text-3xl font-bold">
-      🎉 Premium ativado com sucesso!
-    </h3>
-
-    <p className="mt-2">
-  Seu plano já está ativo e liberado.
-</p>
-
-<p className="mt-2 font-bold">
-  Redirecionando para o painel...
-</p>
-  </div>
-)}
-        </div>
-      )}
     </main>
-  );
+  </>
+);
 }
