@@ -88,7 +88,7 @@ setPremiumAtivado(false);
     pix.copiaecola
   );
 
-  alert("PIX copiado!");
+  setStatus("✅ PIX copiado");
 }
 useEffect(() => {
   async function carregarPremium() {
@@ -140,6 +140,18 @@ useEffect(() => {
       }
 
      if (data.status === "paid") {
+      setStatus("✅ Pagamento aprovado");
+setPremiumAtivado(true);
+
+clearInterval(interval);
+
+setTimeout(() => {
+  setMostrarPix(false);
+
+  setTimeout(() => {
+    router.push("/admin");
+  }, 2000);
+}, 3000);
   setStatus("✅ Pagamento aprovado");
   setPremiumAtivado(true);
 
