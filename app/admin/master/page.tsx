@@ -133,10 +133,14 @@ async function excluirEmpresa(id: string) {
     .delete()
     .eq('id', id)
 
+  console.log('ERRO DELETE:', error)
+
   if (error) {
-    alert('Erro ao excluir empresa')
+    alert(error.message)
     return
   }
+
+  alert('Empresa excluída')
 
   carregarDados()
 }
