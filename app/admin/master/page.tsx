@@ -122,6 +122,9 @@ async function alterarPremium(
 }
 
 async function excluirEmpresa(empresaId: number) {
+
+  console.log('EXCLUINDO:', empresaId)
+
   const confirmar = confirm(
     'Deseja realmente excluir esta empresa?'
   )
