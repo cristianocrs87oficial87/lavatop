@@ -1,160 +1,213 @@
-"use client";
+'use client'
 
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
+import { supabase } from '@/lib/supabase'
 
-export default function MasterAdminPage() {
-  const [empresas, setEmpresas] = useState<any[]>([]);
+export default function MasterPage() {
+ const [empresas, setEmpresas] = useState<any[]>([])
+const [totalEmpresas, setTotalEmpresas] = useState(0)
+const [premiumAtivas, setPremiumAtivas] = useState(0)
+const [testeGratis, setTesteGratis] = useState(0)
+const [taxaConversao, setTaxaConversao] = useState(0)
 
+
+const [receitaMensal, setReceitaMensal] = useState(0)
+const [pixPagos, setPixPagos] = useState(0)
+const [pixPendentes, setPixPendentes] = useState(0)
+const [agendamentosTotal, setAgendamentosTotal] = useState(0)
+const [agendamentosHoje, setAgendamentosHoje] = useState(0)
   useEffect(() => {
-    carregarEmpresas();
-  }, []);
+  carregarDados()
+}, [])
+async function verificarAcesso() {
+  const {
+    data: { user }
+  } = await supabase.auth.getUser()
 
-  async function carregarEmpresas() {
-    try {
-      const response = await fetch("/api/master/empresas");
-      const data = await response.json();
-      setEmpresas(data || []);
-    } catch (error) {
-      console.error(error);
-    }
+  if (
+    user?.email !== 'cristianocrs87oficial@gmail.com'
+  ) {
+    window.location.href = '/admin'
+    return
   }
 
-  async function ativarPremium(id: number) {
+  carregarDados()
 }
 
-async function excluirEmpresa(id: number) {
-  const confirmar = confirm(
-    "Deseja realmente excluir esta empresa?"
-  );
+  async function carregarDados() {
+  const { data, error } = await supabase
+  .from('empresas')
+  .select('*')
 
-  if (!confirmar) return;
+console.log('DATA:', data)
+console.log('ERROR:', error)
 
-  try {
-    const response = await fetch(
-      "/api/master/excluir",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ id }),
-      }
-    );
+  console.log('EMPRESAS:', data)
 
-    const data = await response.json();
+  if (!data) return
 
-    if (!response.ok) {
-  console.log(data);
-  alert(data.error || "Erro ao excluir");
-  return;
+  setEmpresas(data)
+  setTotalEmpresas(data.length)
+  setPremiumAtivas(data.filter(e => e.premium).length)
+  setTesteGratis(data.filter(e => !e.premium).length)
+  const premium = data.filter(e => e.premium).length
+
+setTaxaConversao(
+  Number(((premium / data.length) * 100).toFixed(1))
+)
+  const { data: pagamentos } = await supabase
+  .from('premium_pagamentos')
+  .select('*')
+
+if (pagamentos) {
+  const pagos = pagamentos.filter(
+    (p) => p.status === 'paid'
+  )
+
+  const pendentes = pagamentos.filter(
+    (p) => p.status === 'pending'
+  )
+
+  setPixPagos(pagos.length)
+  setPixPendentes(pendentes.length)
+
+  const totalReceita = pagos.reduce(
+    (acc, p) => acc + Number(p.valor || 0),
+    0
+  )
+
+  setReceitaMensal(totalReceita)
 }
 
-    alert("Empresa excluída com sucesso!");
+const { data: agendamentos } = await supabase
+  .from('agendamentos')
+  .select('*')
+  console.log('AGENDAMENTOS:', agendamentos)
 
-    carregarEmpresas();
-  } catch (error) {
-    console.error(error);
-    alert("Erro ao excluir");
-  }
+if (agendamentos) {
+  setAgendamentosTotal(agendamentos.length)
+
+  const hoje = new Date().toISOString().split('T')[0]
+
+  const hojeCount = agendamentos.filter(
+    (a) => a.data === hoje
+  ).length
+
+  setAgendamentosHoje(hojeCount)
 }
-
+}
+const receitaAnual = receitaMensal * 12
   return (
-    <div className="min-h-screen bg-zinc-950 text-white p-6">
+    <div className="p-6">
       <h1 className="text-3xl font-bold mb-6">
-        Master Admin
+        Painel Master LavaTop
       </h1>
 
-      <div className="grid grid-cols-1 md:grid-cols-5 gap-4 mb-8">
-        <div className="bg-zinc-900 p-4 rounded-xl">
-          <h2 className="text-zinc-400 text-sm">
-            Total Empresas
-          </h2>
-          <p className="text-3xl font-bold">
-            {empresas.length}
-          </p>
-        </div>
+      <div className="grid md:grid-cols-3 gap-4 mb-6">
 
-        <div className="bg-zinc-900 p-4 rounded-xl">
-          <h2 className="text-zinc-400 text-sm">
-            Premium
-          </h2>
-          <p className="text-3xl font-bold text-green-400">
-            {empresas.filter((e) => e.premium).length}
-          </p>
-        </div>
+  <div className="bg-white rounded-xl shadow p-4">
+    <h2 className="text-gray-500">🏢 Empresas</h2>
+    <p className="text-3xl font-bold">{totalEmpresas}</p>
+  </div>
 
-        <div className="bg-zinc-900 p-4 rounded-xl">
-          <h2 className="text-zinc-400 text-sm">
-            Gratuitas
-          </h2>
-          <p className="text-3xl font-bold text-yellow-400">
-            {empresas.filter((e) => !e.premium).length}
-          </p>
-        </div>
+  <div className="bg-white rounded-xl shadow p-4">
+    <h2 className="text-gray-500">⭐ Premium</h2>
+    <p className="text-3xl font-bold">{premiumAtivas}</p>
+  </div>
 
-        <div className="bg-zinc-900 p-4 rounded-xl">
-          <h2 className="text-zinc-400 text-sm">
-            Faturamento Mensal
-          </h2>
-          <p className="text-3xl font-bold text-cyan-400">
-            R$ {empresas.filter((e) => e.premium).length * 97}
-          </p>
-        </div>
-      </div>
+  <div className="bg-white rounded-xl shadow p-4">
+    <h2 className="text-gray-500">🆓 Teste Grátis</h2>
+    <p className="text-3xl font-bold">{testeGratis}</p>
+  </div>
 
-      <div className="bg-zinc-900 rounded-xl p-6">
-        <h2 className="text-xl font-semibold mb-4">
-          Empresas
-        </h2>
+</div>
 
+<div className="grid md:grid-cols-3 gap-4 mb-6">
+
+  <div className="bg-white rounded-xl shadow p-4">
+    <h2 className="text-gray-500">💰 Receita</h2>
+    <div className="bg-white rounded-xl shadow p-4">
+  <h2 className="text-gray-500">💎 Receita Anual</h2>
+  <p className="text-3xl font-bold">
+    R$ {receitaAnual.toFixed(2)}
+  </p>
+</div>
+    <p className="text-3xl font-bold">
+      R$ {receitaMensal.toFixed(2)}
+    </p>
+  </div>
+
+  <div className="bg-white rounded-xl shadow p-4">
+    <h2 className="text-gray-500">💵 PIX Pagos</h2>
+    <p className="text-3xl font-bold">{pixPagos}</p>
+  </div>
+
+  <div className="bg-white rounded-xl shadow p-4">
+    <h2 className="text-gray-500">⏳ PIX Pendentes</h2>
+    <p className="text-3xl font-bold">{pixPendentes}</p>
+  </div>
+
+</div>
+
+<div className="grid md:grid-cols-2 gap-4 mb-6">
+
+  <div className="bg-white rounded-xl shadow p-4">
+    <h2 className="text-gray-500">📋 Agendamentos Totais</h2>
+    <p className="text-3xl font-bold">{agendamentosTotal}</p>
+  </div>
+
+  <div className="bg-white rounded-xl shadow p-4">
+    <h2 className="text-gray-500">📅 Agendamentos Hoje</h2>
+    <p className="text-3xl font-bold">{agendamentosHoje}</p>
+  </div>
+
+</div>
+<div className="bg-white rounded-xl shadow p-4">
+  <h2 className="text-xl font-bold mb-4">
+    Empresas Cadastradas
+  </h2>
         <table className="w-full">
           <thead>
-            <tr className="border-b border-zinc-700">
-              <th className="text-left py-2">Empresa</th>
-              <th className="text-left">Telefone</th>
-              <th className="text-left">Premium</th>
-              <th className="text-left">Role</th>
-              <th className="text-left">Ações</th>
-            </tr>
-          </thead>
+  <tr className="border-b">
+    <th className="text-left py-2">Empresa</th>
+    <th className="text-left py-2">Telefone</th>
+    <th className="text-left py-2">Plano</th>
+    <th className="text-left py-2">Premium Até</th>
+    <th className="text-left py-2">Cadastro</th>
+  </tr>
+</thead>
 
           <tbody>
-            {empresas.map((empresa) => (
-              <tr
-                key={empresa.id}
-                className="border-b border-zinc-800"
-              >
-                <td className="py-3">{empresa.nome}</td>
-                <td>{empresa.telefone}</td>
-                <td>
-                  {empresa.premium ? "✅" : "❌"}
-                </td>
-                <td>{empresa.role}</td>
+  {empresas.map((empresa) => (
+    <tr key={empresa.id} className="border-b">
 
-                <td className="flex gap-2 py-2">
-  <button
-    onClick={() =>
-      ativarPremium(empresa.id)
-    }
-    className="bg-green-600 px-3 py-1 rounded text-sm"
-  >
-    Premium
-  </button>
+      <td className="py-2">
+        {empresa.nome}
+      </td>
 
-  <button
-    onClick={() =>
-      excluirEmpresa(empresa.id)
-    }
-    className="bg-red-600 px-3 py-1 rounded text-sm"
-  >
-    Excluir
-  </button>
-</td>
-              </tr>
-            ))}
-          </tbody>
+      <td className="py-2">
+        {empresa.telefone || '-'}
+      </td>
+
+      <td className="py-2">
+        {empresa.premium ? 'Premium' : 'Teste'}
+      </td>
+
+      <td className="py-2">
+        {empresa.premium_ate
+          ? new Date(empresa.premium_ate).toLocaleDateString('pt-BR')
+          : '-'}
+      </td>
+
+      <td className="py-2">
+        {new Date(empresa.created_at).toLocaleDateString('pt-BR')}
+      </td>
+
+    </tr>
+  ))}
+</tbody>
         </table>
       </div>
     </div>
-  );
+  )
 }
