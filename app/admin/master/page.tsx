@@ -121,26 +121,31 @@ async function alterarPremium(
   carregarDados()
 }
 
-async function excluirEmpresa(id: string) {
+async function excluirEmpresa(empresaId: number) {
   const confirmar = confirm(
     'Deseja realmente excluir esta empresa?'
   )
 
   if (!confirmar) return
 
+  // Apaga serviços vinculados
+  await supabase
+    .from('servicos')
+    .delete()
+    .eq('empresa_id', empresaId)
+
+  // Agora apaga a empresa
   const { error } = await supabase
     .from('empresas')
     .delete()
-    .eq('id', id)
-
-  console.log('ERRO DELETE:', error)
+    .eq('id', empresaId)
 
   if (error) {
     alert(error.message)
     return
   }
 
-  alert('Empresa excluída')
+  alert('Empresa excluída com sucesso')
 
   carregarDados()
 }
