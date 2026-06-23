@@ -96,6 +96,50 @@ if (agendamentos) {
   setAgendamentosHoje(hojeCount)
 }
 }
+async function alterarPremium(
+  id: string,
+  premiumAtual: boolean
+) {
+  const novaData = new Date()
+  novaData.setDate(novaData.getDate() + 30)
+
+  const { error } = await supabase
+    .from('empresas')
+    .update({
+      premium: !premiumAtual,
+      premium_ate: !premiumAtual
+        ? novaData.toISOString()
+        : null
+    })
+    .eq('id', id)
+
+  if (error) {
+    alert('Erro ao alterar Premium')
+    return
+  }
+
+  carregarDados()
+}
+
+async function excluirEmpresa(id: string) {
+  const confirmar = confirm(
+    'Deseja realmente excluir esta empresa?'
+  )
+
+  if (!confirmar) return
+
+  const { error } = await supabase
+    .from('empresas')
+    .delete()
+    .eq('id', id)
+
+  if (error) {
+    alert('Erro ao excluir empresa')
+    return
+  }
+
+  carregarDados()
+}
 const receitaAnual = receitaMensal * 12
   return (
     <div className="min-h-screen bg-gray-900 text-white p-6">
@@ -171,6 +215,7 @@ const receitaAnual = receitaMensal * 12
     <th className="text-left py-2">Plano</th>
     <th className="text-left py-2">Premium Até</th>
     <th className="text-left py-2">Cadastro</th>
+<th className="text-left py-2">Ações</th>
   </tr>
 </thead>
 
@@ -199,6 +244,38 @@ const receitaAnual = receitaMensal * 12
       <td className="py-2">
         {new Date(empresa.created_at).toLocaleDateString('pt-BR')}
       </td>
+      <td className="py-2">
+  <div className="flex gap-2">
+
+    <button
+      onClick={() =>
+        alterarPremium(
+          empresa.id,
+          empresa.premium
+        )
+      }
+      className={`px-3 py-1 rounded text-sm font-medium ${
+        empresa.premium
+          ? 'bg-yellow-600 hover:bg-yellow-700'
+          : 'bg-green-600 hover:bg-green-700'
+      }`}
+    >
+      {empresa.premium
+        ? 'Remover'
+        : 'Premium'}
+    </button>
+
+    <button
+      onClick={() =>
+        excluirEmpresa(empresa.id)
+      }
+      className="px-3 py-1 rounded text-sm font-medium bg-red-600 hover:bg-red-700"
+    >
+      Excluir
+    </button>
+
+  </div>
+</td>
 
     </tr>
   ))}
