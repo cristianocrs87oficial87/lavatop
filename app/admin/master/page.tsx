@@ -152,10 +152,14 @@ async function excluirEmpresa(empresaId: number) {
     .eq('empresa_id', empresaId)
 
   // Apaga empresa
-  const { error } = await supabase
-    .from('empresas')
-    .delete()
-    .eq('id', empresaId)
+  const { error, data } = await supabase
+  .from('empresas')
+  .delete()
+  .eq('id', empresaId)
+  .select()
+
+console.log('DELETE RESULT:', data)
+console.log('DELETE ERROR:', error)
 
   if (error) {
     alert(error.message)
