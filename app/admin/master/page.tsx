@@ -98,75 +98,72 @@ if (agendamentos) {
 }
 const receitaAnual = receitaMensal * 12
   return (
-    <div className="p-6">
+    <div className="min-h-screen bg-gray-900 text-white p-6">
       <h1 className="text-3xl font-bold mb-6">
         Painel Master LavaTop
       </h1>
 
       <div className="grid md:grid-cols-3 gap-4 mb-6">
 
-  <div className="bg-white rounded-xl shadow p-4">
+  <div className="bg-gray-800 rounded-xl shadow-lg p-4">
     <h2 className="text-gray-500">🏢 Empresas</h2>
     <p className="text-3xl font-bold">{totalEmpresas}</p>
   </div>
 
-  <div className="bg-white rounded-xl shadow p-4">
+  <div className="bg-gray-800 rounded-xl shadow-lg p-4">
     <h2 className="text-gray-500">⭐ Premium</h2>
     <p className="text-3xl font-bold">{premiumAtivas}</p>
   </div>
-
-  <div className="bg-white rounded-xl shadow p-4">
+<div className="bg-gray-800 rounded-xl shadow-lg p-4">
     <h2 className="text-gray-500">🆓 Teste Grátis</h2>
     <p className="text-3xl font-bold">{testeGratis}</p>
   </div>
 
-</div>
-
-<div className="grid md:grid-cols-3 gap-4 mb-6">
-
-  <div className="bg-white rounded-xl shadow p-4">
-    <h2 className="text-gray-500">💰 Receita</h2>
-    <div className="bg-white rounded-xl shadow p-4">
-  <h2 className="text-gray-500">💎 Receita Anual</h2>
-  <p className="text-3xl font-bold">
-    R$ {receitaAnual.toFixed(2)}
-  </p>
-</div>
-    <p className="text-3xl font-bold">
+  <div className="bg-gray-800 rounded-xl shadow-lg p-4">
+    <h2 className="text-gray-400">💰 Receita Mensal</h2>
+    <p className="text-3xl font-bold text-green-400">
       R$ {receitaMensal.toFixed(2)}
     </p>
   </div>
 
-  <div className="bg-white rounded-xl shadow p-4">
-    <h2 className="text-gray-500">💵 PIX Pagos</h2>
-    <p className="text-3xl font-bold">{pixPagos}</p>
+  <div className="bg-gray-800 rounded-xl shadow-lg p-4">
+    <h2 className="text-gray-400">💎 Receita Anual</h2>
+    <p className="text-3xl font-bold text-cyan-400">
+      R$ {receitaAnual.toFixed(2)}
+    </p>
   </div>
 
-  <div className="bg-white rounded-xl shadow p-4">
-    <h2 className="text-gray-500">⏳ PIX Pendentes</h2>
-    <p className="text-3xl font-bold">{pixPendentes}</p>
+  <div className="bg-gray-800 rounded-xl shadow-lg p-4">
+    <h2 className="text-gray-400">📈 Conversão Premium</h2>
+    <p className="text-3xl font-bold text-yellow-400">
+      {taxaConversao}%
+    </p>
   </div>
 
 </div>
 
 <div className="grid md:grid-cols-2 gap-4 mb-6">
 
-  <div className="bg-white rounded-xl shadow p-4">
-    <h2 className="text-gray-500">📋 Agendamentos Totais</h2>
-    <p className="text-3xl font-bold">{agendamentosTotal}</p>
+  <div className="bg-gray-800 rounded-xl shadow-lg p-4">
+    <h2 className="text-gray-400">💵 PIX Pagos</h2>
+    <p className="text-3xl font-bold text-green-400">
+      {pixPagos}
+    </p>
   </div>
 
-  <div className="bg-white rounded-xl shadow p-4">
-    <h2 className="text-gray-500">📅 Agendamentos Hoje</h2>
-    <p className="text-3xl font-bold">{agendamentosHoje}</p>
+  <div className="bg-gray-800 rounded-xl shadow-lg p-4">
+    <h2 className="text-gray-400">⏳ PIX Pendentes</h2>
+    <p className="text-3xl font-bold text-red-400">
+      {pixPendentes}
+    </p>
   </div>
 
 </div>
-<div className="bg-white rounded-xl shadow p-4">
+<div className="bg-gray-800 rounded-xl shadow-lg p-4 mt-6">
   <h2 className="text-xl font-bold mb-4">
     Empresas Cadastradas
   </h2>
-        <table className="w-full">
+        <table className="w-full text-white">
           <thead>
   <tr className="border-b">
     <th className="text-left py-2">Empresa</th>
