@@ -128,33 +128,38 @@ async function excluirEmpresa(empresaId: number) {
 
   if (!confirmar) return
 
-  const { error: erroServicos } = await supabase
+  // Apaga agendamentos
+  await supabase
+    .from('agendamentos')
+    .delete()
+    .eq('empresa_id', empresaId)
+
+  // Apaga serviços
+  await supabase
     .from('servicos')
     .delete()
     .eq('empresa_id', empresaId)
 
-  console.log('ERRO SERVICOS:', erroServicos)
+  // Remove vínculo dos usuários
+  await supabase
+    .from('usuarios')
+    .update({
+      empresa_id: null
+    })
+    .eq('empresa_id', empresaId)
 
-  const { data, error: erroEmpresa } = await supabase
+  // Apaga empresa
+  const { error } = await supabase
     .from('empresas')
     .delete()
     .eq('id', empresaId)
-    .select()
 
-  console.log('DADOS EMPRESA:', data)
-  console.log('ERRO EMPRESA:', erroEmpresa)
-
-  if (erroServicos) {
-    alert('Erro serviços: ' + erroServicos.message)
+  if (error) {
+    alert(error.message)
     return
   }
 
-  if (erroEmpresa) {
-    alert('Erro empresa: ' + erroEmpresa.message)
-    return
-  }
-
-  alert('Empresa excluída')
+  alert('Empresa excluída com sucesso')
 
   carregarDados()
 }
