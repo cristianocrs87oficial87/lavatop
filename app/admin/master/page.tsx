@@ -21,6 +21,10 @@ const [empresasAtivasHoje, setEmpresasAtivasHoje] = useState(0)
 const [empresasSemAcesso, setEmpresasSemAcesso] = useState(0)
 const [busca, setBusca] = useState('')
 const [filtro, setFiltro] = useState('todos')
+const [mostrarModalRenovar, setMostrarModalRenovar] = useState(false)
+const [empresaSelecionada, setEmpresaSelecionada] = useState<string | null>(null)
+const [diasRenovacao, setDiasRenovacao] = useState(30)
+
   useEffect(() => {
   carregarDados()
 }, [])
@@ -152,6 +156,28 @@ async function alterarPremium(
     return
   }
 
+  carregarDados()
+}
+async function renovarPremium() {
+  if (!empresaSelecionada) return
+
+  const novaData = new Date()
+  novaData.setDate(novaData.getDate() + diasRenovacao)
+
+  const { error } = await supabase
+    .from('empresas')
+    .update({
+      premium: true,
+      premium_ate: novaData.toISOString(),
+    })
+    .eq('id', empresaSelecionada)
+
+  if (error) {
+    alert('Erro ao renovar Premium.')
+    return
+  }
+
+  setMostrarModalRenovar(false)
   carregarDados()
 }
 
@@ -578,44 +604,15 @@ Status CRM
   </button>
 
   <button
-    onClick={() => {
-      if (!empresa.telefone) {
-        alert('Empresa sem telefone.')
-        return
-      }
-
-      const numero = empresa.telefone.replace(/\D/g, '')
-
-      const mensagem = encodeURIComponent(
-  `Olá! 👋
-
-Aqui é a equipe do LavaTop.
-
-Percebemos que sua empresa está utilizando o período de teste da plataforma.
-
-Gostaria de saber se está conseguindo utilizar o sistema normalmente ou se precisa de alguma ajuda.
-
-Estou à disposição! 🚗✨`
-)
-
-window.open(
-  `https://wa.me/55${numero}?text=${mensagem}`,
-  '_blank'
-)
-    }}
-    className="px-3 py-1 rounded text-sm font-medium bg-green-500 hover:bg-green-600"
-  >
-    WhatsApp
-  </button>
-
-  <button
-    onClick={() =>
-      excluirEmpresa(empresa.id)
-    }
-    className="px-3 py-1 rounded text-sm font-medium bg-red-600 hover:bg-red-700"
-  >
-    Excluir
-  </button>
+  onClick={() => {
+    setEmpresaSelecionada(empresa.id)
+    setDiasRenovacao(30)
+    setMostrarModalRenovar(true)
+  }}
+  className="px-3 py-1 rounded text-sm font-medium bg-blue-600 hover:bg-blue-700"
+>
+  Renovar
+</button>
 
 </div>
 </td>
@@ -624,7 +621,54 @@ window.open(
   ))}
 </tbody>
         </table>
+        {mostrarModalRenovar && (
+  <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-50">
+    <div className="bg-gray-900 rounded-xl p-6 w-96 border border-gray-700">
+
+      <h2 className="text-xl font-bold mb-4 text-white">
+        Renovar Premium
+      </h2>
+
+      <p className="text-gray-300 mb-4">
+        Escolha o período da renovação:
+      </p>
+
+      <select
+        value={diasRenovacao}
+        onChange={(e) =>
+          setDiasRenovacao(Number(e.target.value))
+        }
+        className="w-full p-2 rounded bg-gray-800 text-white mb-6"
+      >
+        <option value={30}>30 dias</option>
+        <option value={365}>1 Ano</option>
+      </select>
+
+      <div className="flex justify-end gap-3">
+
+        <button
+          onClick={() =>
+            setMostrarModalRenovar(false)
+          }
+          className="px-4 py-2 rounded bg-gray-600 hover:bg-gray-700"
+        >
+          Cancelar
+        </button>
+
+        <button
+          onClick={renovarPremium}
+          className="px-4 py-2 rounded bg-green-600 hover:bg-green-700"
+        >
+          Confirmar
+        </button>
+
+      </div>
+
+    </div>
+  </div>
+)}
       </div>
     </div>
+    
   )
 }
