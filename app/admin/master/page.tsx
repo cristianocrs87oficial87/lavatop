@@ -604,15 +604,53 @@ Status CRM
   </button>
 
   <button
-  onClick={() => {
-    setEmpresaSelecionada(empresa.id)
-    setDiasRenovacao(30)
-    setMostrarModalRenovar(true)
-  }}
-  className="px-3 py-1 rounded text-sm font-medium bg-blue-600 hover:bg-blue-700"
->
-  Renovar
-</button>
+    onClick={() => {
+      if (!empresa.telefone) {
+        alert('Empresa sem telefone.')
+        return
+      }
+
+      const numero = empresa.telefone.replace(/\D/g, '')
+
+      const mensagem = encodeURIComponent(
+        `Olá! 👋
+
+Aqui é a equipe do LavaTop.
+
+Percebemos que sua empresa está utilizando nossa plataforma.
+
+Posso ajudar em alguma dúvida?`
+      )
+
+      window.open(
+        `https://wa.me/55${numero}?text=${mensagem}`,
+        '_blank'
+      )
+    }}
+    className="px-3 py-1 rounded text-sm font-medium bg-green-600 hover:bg-green-700"
+  >
+    WhatsApp
+  </button>
+
+  <button
+    onClick={() => {
+      setEmpresaSelecionada(empresa.id)
+      setDiasRenovacao(30)
+      setMostrarModalRenovar(true)
+    }}
+    className="px-3 py-1 rounded text-sm font-medium bg-blue-600 hover:bg-blue-700"
+  >
+    Renovar
+  </button>
+
+  <button
+    onClick={() =>
+      excluirEmpresa(empresa.id)
+    }
+    className="px-3 py-1 rounded text-sm font-medium bg-red-600 hover:bg-red-700"
+  >
+    Excluir
+  </button>
 
 </div>
 </td>
