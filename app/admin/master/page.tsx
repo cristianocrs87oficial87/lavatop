@@ -16,6 +16,8 @@ const [pixPagos, setPixPagos] = useState(0)
 const [pixPendentes, setPixPendentes] = useState(0)
 const [agendamentosTotal, setAgendamentosTotal] = useState(0)
 const [agendamentosHoje, setAgendamentosHoje] = useState(0)
+const [empresasAtivasHoje, setEmpresasAtivasHoje] = useState(0)
+const [empresasSemAcesso, setEmpresasSemAcesso] = useState(0)
   useEffect(() => {
   carregarDados()
 }, [])
@@ -50,6 +52,35 @@ console.log('ERROR:', error)
   setTotalEmpresas(data.length)
   setPremiumAtivas(data.filter(e => e.premium).length)
   setTesteGratis(data.filter(e => !e.premium).length)
+  const hoje = new Date()
+
+let ativasHoje = 0
+let semAcesso = 0
+
+data.forEach((empresa) => {
+  if (!empresa.ultimo_acesso) {
+    semAcesso++
+    return
+  }
+
+  const ultimo = new Date(empresa.ultimo_acesso)
+
+  const diferencaDias = Math.floor(
+    (hoje.getTime() - ultimo.getTime()) /
+      (1000 * 60 * 60 * 24)
+  )
+
+  if (diferencaDias === 0) {
+    ativasHoje++
+  }
+
+  if (diferencaDias >= 3) {
+    semAcesso++
+  }
+})
+
+setEmpresasAtivasHoje(ativasHoje)
+setEmpresasSemAcesso(semAcesso)
   const premium = data.filter(e => e.premium).length
 
 setTaxaConversao(
@@ -192,6 +223,25 @@ const receitaAnual = receitaMensal * 12
     <h2 className="text-gray-500">🆓 Teste Grátis</h2>
     <p className="text-3xl font-bold">{testeGratis}</p>
   </div>
+  <div className="bg-gray-800 rounded-xl shadow-lg p-4">
+  <h2 className="text-gray-400">
+    🟢 Ativas Hoje
+  </h2>
+
+  <p className="text-3xl font-bold text-green-400">
+    {empresasAtivasHoje}
+  </p>
+</div>
+
+<div className="bg-gray-800 rounded-xl shadow-lg p-4">
+  <h2 className="text-gray-400">
+    🔴 Sem acessar (+3 dias)
+  </h2>
+
+  <p className="text-3xl font-bold text-red-400">
+    {empresasSemAcesso}
+  </p>
+</div>
 
   <div className="bg-gray-800 rounded-xl shadow-lg p-4">
     <h2 className="text-gray-400">💰 Receita Mensal</h2>
@@ -245,6 +295,14 @@ const receitaAnual = receitaMensal * 12
     <th className="text-left py-2">Plano</th>
     <th className="text-left py-2">Premium Até</th>
     <th className="text-left py-2">Cadastro</th>
+
+<th className="text-left py-2">
+Último acesso
+</th>
+
+<th className="text-left py-2">
+Status CRM
+</th>
 <th className="text-left py-2">Ações</th>
   </tr>
 </thead>
@@ -274,6 +332,49 @@ const receitaAnual = receitaMensal * 12
       <td className="py-2">
         {new Date(empresa.created_at).toLocaleDateString('pt-BR')}
       </td>
+      <td className="py-2">
+  {empresa.ultimo_acesso
+    ? new Date(
+        empresa.ultimo_acesso
+      ).toLocaleString('pt-BR')
+    : '-'}
+</td>
+
+<td className="py-2">
+  {!empresa.ultimo_acesso ? (
+    <span className="text-red-500">
+      🔴 Nunca entrou
+    </span>
+  ) : (() => {
+      const dias = Math.floor(
+        (new Date().getTime() -
+          new Date(
+            empresa.ultimo_acesso
+          ).getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
+
+      if (dias === 0)
+        return (
+          <span className="text-green-400">
+            🟢 Ativo Hoje
+          </span>
+        )
+
+      if (dias <= 2)
+        return (
+          <span className="text-yellow-400">
+            🟡 Pouco ativo
+          </span>
+        )
+
+      return (
+        <span className="text-red-500">
+          🔴 Precisa contato
+        </span>
+      )
+    })()}
+</td>
       <td className="py-2">
   <div className="flex gap-2">
 
