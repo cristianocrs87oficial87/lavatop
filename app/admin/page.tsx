@@ -4,6 +4,8 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
+import BannerPremium from '@/components/BannerPremium'
+
 
 export default function Admin() {
   const router = useRouter();
@@ -74,7 +76,7 @@ const { data, error } = await supabase
 
     const { data, error } = await supabase
       .from("empresas")
-      .select("id, premium, premium_ate")
+    .select("id, premium, premium_ate, created_at")
       .eq("usuario_id", user.id)
       .single();
 
@@ -322,7 +324,7 @@ const cancelados = agendamentos.filter(
           Sair
         </button>
       </div>
-
+       <BannerPremium empresa={empresa} />
 
 <div className="grid lg:grid-cols-4 gap-6">
 
