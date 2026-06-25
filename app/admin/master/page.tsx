@@ -20,6 +20,7 @@ const [agendamentosHoje, setAgendamentosHoje] = useState(0)
 const [empresasAtivasHoje, setEmpresasAtivasHoje] = useState(0)
 const [empresasSemAcesso, setEmpresasSemAcesso] = useState(0)
 const [busca, setBusca] = useState('')
+const [filtro, setFiltro] = useState('todos')
   useEffect(() => {
   carregarDados()
 }, [])
@@ -289,14 +290,30 @@ const receitaAnual = receitaMensal * 12
   <h2 className="text-xl font-bold mb-4">
     Empresas Cadastradas
   </h2>
-  <div className="mb-6">
+  <div className="mb-6 flex gap-4">
+
   <input
     type="text"
     placeholder="🔍 Buscar empresa ou telefone..."
     value={busca}
     onChange={(e) => setBusca(e.target.value)}
-    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+    className="flex-1 rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
   />
+
+  <select
+    value={filtro}
+    onChange={(e) => setFiltro(e.target.value)}
+    className="rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white"
+  >
+    <option value="todos">Todos</option>
+    <option value="premium">Premium</option>
+    <option value="teste">Teste</option>
+    <option value="expirado">Teste Expirado</option>
+    <option value="nunca">Nunca acessou</option>
+    <option value="ativo">Ativas Hoje</option>
+    <option value="pouco">Pouco Ativas</option>
+  </select>
+
 </div>
         <table className="w-full text-white">
           <thead>
@@ -326,13 +343,66 @@ Status CRM
           <tbody>
   {empresas
   .filter((empresa) => {
-    const termo = busca.toLowerCase()
 
-    return (
-      empresa.nome.toLowerCase().includes(termo) ||
-      (empresa.telefone ?? '').toLowerCase().includes(termo)
-    )
-  })
+  const termo = busca.toLowerCase()
+
+  const encontrado =
+    empresa.nome.toLowerCase().includes(termo) ||
+    (empresa.telefone ?? '').toLowerCase().includes(termo)
+
+  if (!encontrado) return false
+
+  switch (filtro) {
+
+    case 'premium':
+      return empresa.premium
+
+    case 'teste':
+      return !empresa.premium
+
+    case 'nunca':
+      return !empresa.ultimo_acesso
+
+    case 'ativo':
+      if (!empresa.ultimo_acesso) return false
+
+      return (
+        new Date().toDateString() ===
+        new Date(empresa.ultimo_acesso).toDateString()
+      )
+
+    case 'pouco':
+      if (!empresa.ultimo_acesso) return false
+
+      {
+        const dias = Math.floor(
+          (Date.now() -
+            new Date(empresa.ultimo_acesso).getTime()) /
+            (1000 * 60 * 60 * 24)
+        )
+
+        return dias >= 1 && dias <= 2
+      }
+
+    case 'expirado':
+      if (empresa.premium) return false
+
+      {
+        const criado = new Date(empresa.created_at)
+
+        const dias = Math.floor(
+          (Date.now() - criado.getTime()) /
+          (1000 * 60 * 60 * 24)
+        )
+
+        return dias > 7
+      }
+
+    default:
+      return true
+  }
+
+})
   .map((empresa) => (
     <tr key={empresa.id} className="border-b">
       
@@ -491,34 +561,51 @@ Status CRM
       <td className="py-2">
   <div className="flex gap-2">
 
-    <button
-      onClick={() =>
-        alterarPremium(
-          empresa.id,
-          empresa.premium
-        )
-      }
-      className={`px-3 py-1 rounded text-sm font-medium ${
+  <button
+    onClick={() =>
+      alterarPremium(
+        empresa.id,
         empresa.premium
-          ? 'bg-yellow-600 hover:bg-yellow-700'
-          : 'bg-green-600 hover:bg-green-700'
-      }`}
-    >
-      {empresa.premium
-        ? 'Remover'
-        : 'Premium'}
-    </button>
+      )
+    }
+    className={`px-3 py-1 rounded text-sm font-medium ${
+      empresa.premium
+        ? 'bg-yellow-600 hover:bg-yellow-700'
+        : 'bg-green-600 hover:bg-green-700'
+    }`}
+  >
+    {empresa.premium ? 'Remover' : 'Premium'}
+  </button>
 
-    <button
-      onClick={() =>
-        excluirEmpresa(empresa.id)
+  <button
+    onClick={() => {
+      if (!empresa.telefone) {
+        alert('Empresa sem telefone.')
+        return
       }
-      className="px-3 py-1 rounded text-sm font-medium bg-red-600 hover:bg-red-700"
-    >
-      Excluir
-    </button>
 
-  </div>
+      const numero = empresa.telefone.replace(/\D/g, '')
+
+      window.open(
+        `https://wa.me/55${numero}`,
+        '_blank'
+      )
+    }}
+    className="px-3 py-1 rounded text-sm font-medium bg-green-500 hover:bg-green-600"
+  >
+    WhatsApp
+  </button>
+
+  <button
+    onClick={() =>
+      excluirEmpresa(empresa.id)
+    }
+    className="px-3 py-1 rounded text-sm font-medium bg-red-600 hover:bg-red-700"
+  >
+    Excluir
+  </button>
+
+</div>
 </td>
 
     </tr>
