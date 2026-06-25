@@ -11,101 +11,50 @@ type Props = {
 export default function BannerPremium({ empresa }: Props) {
   if (!empresa) return null
 
-  const hoje = new Date()
+  return (
+    <div className="mb-8 rounded-2xl overflow-hidden bg-gradient-to-r from-cyan-700 via-blue-700 to-indigo-800 shadow-xl">
 
-  // Empresa em teste
-  if (!empresa.premium) {
-    const criado = new Date(empresa.created_at)
+      <div className="p-8 flex flex-col lg:flex-row justify-between gap-8">
 
-    const dias = Math.floor(
-      (hoje.getTime() - criado.getTime()) /
-      (1000 * 60 * 60 * 24)
-    )
+        <div className="flex-1">
 
-    const restantes = 7 - dias
+          <div className="text-yellow-300 font-bold text-lg mb-3">
+            ⭐ TESTE GRATUITO
+          </div>
 
-    if (restantes <= 0) {
-      return (
-        <div className="bg-red-600 text-white p-4 rounded-lg mb-6">
-          <h2 className="font-bold text-lg">
-            ❌ Seu período de teste terminou
+          <h2 className="text-3xl font-bold text-white mb-3">
+            Bem-vindo ao LavaTop!
           </h2>
 
-          <p>
-            Assine o LavaTop Premium para continuar utilizando o sistema.
+          <p className="text-gray-200 text-lg">
+            Aproveite seu período de avaliação para conhecer todos os recursos do sistema.
           </p>
+
         </div>
-      )
-    }
 
-    if (restantes <= 1) {
-      return (
-        <div className="bg-orange-500 text-white p-4 rounded-lg mb-6">
-          <h2 className="font-bold text-lg">
-            ⏳ Seu teste termina amanhã
-          </h2>
+        <div className="w-full lg:w-80 bg-black/20 rounded-xl p-6">
 
-          <p>
-            Evite interrupções assinando o Premium.
-          </p>
+          <div className="text-white text-lg font-bold mb-2">
+            Recursos Premium
+          </div>
+
+          <ul className="space-y-2 text-gray-100 text-sm">
+            <li>✅ Agendamentos ilimitados</li>
+            <li>✅ Programa Fidelidade</li>
+            <li>✅ Atualizações automáticas</li>
+            <li>✅ Suporte prioritário</li>
+          </ul>
+
+          <button
+            className="mt-6 w-full rounded-lg bg-yellow-400 hover:bg-yellow-300 text-black font-bold py-3 transition"
+          >
+            💳 Assinar Premium
+          </button>
+
         </div>
-      )
-    }
 
-    if (restantes <= 3) {
-      return (
-        <div className="bg-yellow-500 text-black p-4 rounded-lg mb-6">
-          <h2 className="font-bold text-lg">
-            ⚠️ Seu teste termina em {restantes} dias
-          </h2>
+      </div>
 
-          <p>
-            Aproveite para assinar antes do vencimento.
-          </p>
-        </div>
-      )
-    }
-
-    return null
-  }
-
-  // Empresa Premium
-  if (empresa.premium && empresa.premium_ate) {
-    const vence = new Date(empresa.premium_ate)
-
-    const dias = Math.ceil(
-      (vence.getTime() - hoje.getTime()) /
-      (1000 * 60 * 60 * 24)
-    )
-
-    if (dias <= 0) {
-      return (
-        <div className="bg-red-600 text-white p-4 rounded-lg mb-6">
-          <h2 className="font-bold text-lg">
-            ❌ Seu Premium venceu
-          </h2>
-
-          <p>
-            Renove sua assinatura para continuar utilizando os recursos Premium.
-          </p>
-        </div>
-      )
-    }
-
-    if (dias <= 3) {
-      return (
-        <div className="bg-blue-600 text-white p-4 rounded-lg mb-6">
-          <h2 className="font-bold text-lg">
-            ⭐ Seu Premium vence em {dias} dias
-          </h2>
-
-          <p>
-            Renove agora para evitar interrupções.
-          </p>
-        </div>
-      )
-    }
-  }
-
-  return null
+    </div>
+  )
 }
