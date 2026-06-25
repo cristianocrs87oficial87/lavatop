@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { supabase } from '@/lib/supabase'
+import CardsDashboard from './components/CardsDashboard'
 
 export default function MasterPage() {
  const [empresas, setEmpresas] = useState<any[]>([])
@@ -18,6 +19,7 @@ const [agendamentosTotal, setAgendamentosTotal] = useState(0)
 const [agendamentosHoje, setAgendamentosHoje] = useState(0)
 const [empresasAtivasHoje, setEmpresasAtivasHoje] = useState(0)
 const [empresasSemAcesso, setEmpresasSemAcesso] = useState(0)
+const [busca, setBusca] = useState('')
   useEffect(() => {
   carregarDados()
 }, [])
@@ -287,6 +289,15 @@ const receitaAnual = receitaMensal * 12
   <h2 className="text-xl font-bold mb-4">
     Empresas Cadastradas
   </h2>
+  <div className="mb-6">
+  <input
+    type="text"
+    placeholder="🔍 Buscar empresa ou telefone..."
+    value={busca}
+    onChange={(e) => setBusca(e.target.value)}
+    className="w-full rounded-lg border border-gray-700 bg-gray-800 px-4 py-3 text-white placeholder-gray-400 focus:border-blue-500 focus:outline-none"
+  />
+</div>
         <table className="w-full text-white">
           <thead>
   <tr className="border-b">
@@ -313,54 +324,19 @@ Status CRM
 </thead>
 
           <tbody>
-  {empresas.map((empresa) => (
-    <tr key={empresa.id} className="border-b">
-      {(() => {
-
-    let score = 0
-
-    if (empresa.ultimo_acesso)
-      score += 30
-    if (empresa.telefone)
-      score += 10
-
-    if (empresa.premium)
-      score += 30
-
-    if (agendamentosTotal > 0)
-      score += 20
-
-    if (empresa.logo_url)
-      score += 10
+  {empresas
+  .filter((empresa) => {
+    const termo = busca.toLowerCase()
 
     return (
-      <div>
-
-        <div className="font-bold">
-          {score}/100
-        </div>
-
-        <div
-          className={`text-xs ${
-            score >= 80
-              ? 'text-green-400'
-              : score >= 50
-              ? 'text-yellow-400'
-              : 'text-red-400'
-          }`}
-        >
-          {score >= 80
-            ? '🟢 Excelente'
-            : score >= 50
-            ? '🟡 Boa'
-            : '🔴 Baixa'}
-        </div>
-
-      </div>
+      empresa.nome.toLowerCase().includes(termo) ||
+      (empresa.telefone ?? '').toLowerCase().includes(termo)
     )
+  })
+  .map((empresa) => (
+    <tr key={empresa.id} className="border-b">
+      
 
-  })()}
-  
       <td className="py-2">
         {empresa.nome}
       </td>
