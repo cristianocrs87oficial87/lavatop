@@ -586,10 +586,22 @@ Status CRM
 
       const numero = empresa.telefone.replace(/\D/g, '')
 
-      window.open(
-        `https://wa.me/55${numero}`,
-        '_blank'
-      )
+      const mensagem = encodeURIComponent(
+  `Olá! 👋
+
+Aqui é a equipe do LavaTop.
+
+Percebemos que sua empresa está utilizando o período de teste da plataforma.
+
+Gostaria de saber se está conseguindo utilizar o sistema normalmente ou se precisa de alguma ajuda.
+
+Estou à disposição! 🚗✨`
+)
+
+window.open(
+  `https://wa.me/55${numero}?text=${mensagem}`,
+  '_blank'
+)
     }}
     className="px-3 py-1 rounded text-sm font-medium bg-green-500 hover:bg-green-600"
   >
