@@ -299,9 +299,14 @@ const receitaAnual = receitaMensal * 12
 <th className="text-left py-2">
 Último acesso
 </th>
-
+<th className="text-left py-2">
+Dias de Teste
+</th>
 <th className="text-left py-2">
 Status CRM
+</th>
+<th className="text-left py-2">
+  Score
 </th>
 <th className="text-left py-2">Ações</th>
   </tr>
@@ -310,7 +315,52 @@ Status CRM
           <tbody>
   {empresas.map((empresa) => (
     <tr key={empresa.id} className="border-b">
+      {(() => {
 
+    let score = 0
+
+    if (empresa.ultimo_acesso)
+      score += 30
+    if (empresa.telefone)
+      score += 10
+
+    if (empresa.premium)
+      score += 30
+
+    if (agendamentosTotal > 0)
+      score += 20
+
+    if (empresa.logo_url)
+      score += 10
+
+    return (
+      <div>
+
+        <div className="font-bold">
+          {score}/100
+        </div>
+
+        <div
+          className={`text-xs ${
+            score >= 80
+              ? 'text-green-400'
+              : score >= 50
+              ? 'text-yellow-400'
+              : 'text-red-400'
+          }`}
+        >
+          {score >= 80
+            ? '🟢 Excelente'
+            : score >= 50
+            ? '🟡 Boa'
+            : '🔴 Baixa'}
+        </div>
+
+      </div>
+    )
+
+  })()}
+  
       <td className="py-2">
         {empresa.nome}
       </td>
@@ -338,6 +388,47 @@ Status CRM
         empresa.ultimo_acesso
       ).toLocaleString('pt-BR')
     : '-'}
+</td>
+<td className="py-2">
+  {empresa.premium ? (
+    <span className="text-green-400">
+      Premium
+    </span>
+  ) : (() => {
+      const criado = new Date(
+        empresa.created_at
+      )
+
+      const hoje = new Date()
+
+      const dias = Math.floor(
+        (hoje.getTime() -
+          criado.getTime()) /
+          (1000 * 60 * 60 * 24)
+      )
+
+      const restantes = 7 - dias
+
+      if (restantes <= 0)
+        return (
+          <span className="text-red-500 font-bold">
+            🔴 Expirado
+          </span>
+        )
+
+      if (restantes <= 2)
+        return (
+          <span className="text-yellow-400 font-bold">
+            🟡 {restantes} dias
+          </span>
+        )
+
+      return (
+        <span className="text-green-400">
+          🟢 {restantes} dias
+        </span>
+      )
+    })()}
 </td>
 
 <td className="py-2">
@@ -374,6 +465,52 @@ Status CRM
         </span>
       )
     })()}
+</td>
+<td className="py-2">
+  {(() => {
+
+    let score = 0
+
+    if (empresa.ultimo_acesso)
+      score += 30
+
+    if (empresa.telefone)
+      score += 10
+
+    if (empresa.premium)
+      score += 30
+
+    if (agendamentosTotal > 0)
+      score += 20
+
+    if (empresa.logo_url)
+      score += 10
+
+    return (
+      <div>
+        <div className="font-bold">
+          {score}/100
+        </div>
+
+        <div
+          className={`text-xs ${
+            score >= 80
+              ? 'text-green-400'
+              : score >= 50
+              ? 'text-yellow-400'
+              : 'text-red-400'
+          }`}
+        >
+          {score >= 80
+            ? '🟢 Excelente'
+            : score >= 50
+            ? '🟡 Boa'
+            : '🔴 Baixa'}
+        </div>
+      </div>
+    )
+
+  })()}
 </td>
       <td className="py-2">
   <div className="flex gap-2">
