@@ -7,6 +7,8 @@ import { supabase } from "@/lib/supabase";
 import BannerPremium from '@/components/BannerPremium'
 import PainelPremium from '@/components/PainelPremium'
 import CardsDashboard from "@/components/CardsDashboard"
+import ListaAgendamentos from "@/components/ListaAgendamentos";
+import SidebarAdmin from "@/components/SidebarAdmin";
 
 
 export default function Admin() {
@@ -78,7 +80,7 @@ const { data, error } = await supabase
 
     const { data, error } = await supabase
       .from("empresas")
-    .select("id, premium, premium_ate, created_at")
+    .select("id, premium, premium_ate, created_at, master")
       .eq("usuario_id", user.id)
       .single();
 
@@ -342,83 +344,19 @@ const cancelados = agendamentos.filter(
   total={agendamentos.length}
 />
 
-    <div className="bg-zinc-900 p-6 rounded-2xl">
-      <h2 className="text-3xl font-bold mb-6">
-        Lista de Agendamentos
-      </h2>
-
-      {agendamentos.length === 0 ? (
-        <p>Nenhum agendamento encontrado.</p>
-      ) : (
-        agendamentos.map((item) => (
-          <div
-            key={item.id}
-            className="bg-zinc-800 p-5 rounded-xl mb-4"
-          >
-            <p>
-              <strong>Cliente:</strong> {item.cliente}
-            </p>
-
-            <p>
-              <strong>Telefone:</strong> {item.telefone}
-            </p>
-
-            <p>
-              <strong>Serviço:</strong> {item.servico}
-            </p>
-
-            <p>
-  <strong>Data:</strong>{" "}
-  {item.data_agendamento
-    ? item.data_agendamento
-        .split("-")
-        .reverse()
-        .join("/")
-    : "Não informada"}
-</p>
-            <p>
-              <strong>Hora:</strong>{" "}
-              {item.hora_agendamento || "Não informada"}
-            </p>
-
-            <div className="mt-4">
-              <label className="font-bold mr-2">
-                Status:
-              </label>
-
-              <select
-                value={item.status || "Pendente"}
-                onChange={(e) =>
-                  alterarStatus(item.id, e.target.value)
-                }
-                className="bg-zinc-700 text-white px-3 py-2 rounded-lg"
-              >
-                <option value="Pendente">Pendente</option>
-                <option value="Confirmado">Confirmado</option>
-                <option value="Em andamento">Em andamento</option>
-                <option value="Finalizado">Finalizado</option>
-                <option value="Cancelado">Cancelado</option>
-              </select>
-            </div>
-
-            <button
-              onClick={() =>
-                excluirAgendamento(item.id)
-              }
-              className="mt-4 bg-red-600 hover:bg-red-700 px-4 py-2 rounded-lg font-bold"
-            >
-              Excluir
-            </button>
-          </div>
-        ))
-      )}
-    </div>
-
-  </div>
-
+    <ListaAgendamentos
+  agendamentos={agendamentos}
+  alterarStatus={alterarStatus}
+  excluirAgendamento={excluirAgendamento}
+/>
+</div>
 {/* Sidebar */}
-<div className="space-y-3">
+<div className="space-y-4">
+
+  <SidebarAdmin empresa={empresa} />
+
   <PainelPremium empresa={empresa} />
+
 </div>
 
 </div>
