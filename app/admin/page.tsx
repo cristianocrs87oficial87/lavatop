@@ -80,7 +80,7 @@ const { data, error } = await supabase
 
     const { data, error } = await supabase
       .from("empresas")
-    .select("id, premium, premium_ate, created_at, master")
+    .select("*")
       .eq("usuario_id", user.id)
       .single();
 

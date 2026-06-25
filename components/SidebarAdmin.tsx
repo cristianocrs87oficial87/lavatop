@@ -7,27 +7,61 @@ type Props = {
 };
 
 export default function SidebarAdmin({ empresa }: Props) {
-  const linkAgendamento = empresa?.id
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/agendamento/${empresa.id}`
-    : "";
+  function abrirPaginaAgendamento() {
+    if (!empresa?.id) {
+      alert("Empresa não encontrada.");
+      return;
+    }
 
-  const linkIndicacao = empresa?.id
-    ? `${typeof window !== "undefined" ? window.location.origin : ""}/cadastro?ref=${empresa.id}`
-    : "";
+    window.open(
+      `${window.location.origin}/agendamento/${empresa.id}`,
+      "_blank"
+    );
+  }
 
-  function copiarLink(link: string) {
-    navigator.clipboard.writeText(link);
+  function copiarLinkAgendamento() {
+    if (!empresa?.id) {
+      alert("Empresa não encontrada.");
+      return;
+    }
+
+    navigator.clipboard.writeText(
+      `${window.location.origin}/agendamento/${empresa.id}`
+    );
+
     alert("Link copiado!");
   }
 
+  function copiarLinkIndicacao() {
+    if (!empresa?.id) {
+      alert("Empresa não encontrada.");
+      return;
+    }
+
+    navigator.clipboard.writeText(
+      `${window.location.origin}/cadastro?ref=${empresa.id}`
+    );
+
+    alert("Link de indicação copiado!");
+  }
+
   function compartilharWhatsapp() {
-    const texto = `Conheça o LavaTop!
+    if (!empresa?.id) {
+      alert("Empresa não encontrada.");
+      return;
+    }
+
+    const link =
+      `${window.location.origin}/cadastro?ref=${empresa.id}`;
+
+    const texto =
+`🚗 Conheça o LavaTop!
 
 Sistema completo para Lava Rápido.
 
 Cadastre-se usando meu link:
 
-${linkIndicacao}`;
+${link}`;
 
     window.open(
       `https://wa.me/?text=${encodeURIComponent(texto)}`,
@@ -37,8 +71,6 @@ ${linkIndicacao}`;
 
   return (
     <div className="space-y-4">
-
-      {/* MENU */}
 
       <div className="bg-zinc-900 rounded-2xl p-5">
 
@@ -50,51 +82,42 @@ ${linkIndicacao}`;
 
           <Link
             href="/admin"
-            className="bg-zinc-800 hover:bg-cyan-600 transition p-3 rounded-xl font-semibold"
+            className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
           >
             🏠 Dashboard
           </Link>
 
           <Link
             href="/admin/configuracoes"
-            className="bg-zinc-800 hover:bg-cyan-600 transition p-3 rounded-xl font-semibold"
+            className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
           >
             ⚙ Configurações
           </Link>
 
           <Link
             href="/admin/fidelidade"
-            className="bg-zinc-800 hover:bg-cyan-600 transition p-3 rounded-xl font-semibold"
+            className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
           >
             🎁 Programa Fidelidade
           </Link>
 
           <Link
             href="/admin/clientes-fidelidade"
-            className="bg-zinc-800 hover:bg-cyan-600 transition p-3 rounded-xl font-semibold"
+            className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
           >
             👥 Clientes Fidelidade
           </Link>
 
           <Link
             href="/admin/planos"
-            className="bg-zinc-800 hover:bg-cyan-600 transition p-3 rounded-xl font-semibold"
+            className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
           >
             💎 Premium
           </Link>
 
-          {empresa?.master && (
-            <Link
-              href="/admin/master"
-              className="bg-yellow-600 hover:bg-yellow-500 transition p-3 rounded-xl font-bold"
-            >
-              👑 Painel Master
-            </Link>
-          )}
         </div>
-      </div>
 
-      {/* AGENDAMENTO */}
+      </div>
 
       <div className="bg-zinc-900 rounded-2xl p-5">
 
@@ -104,16 +127,15 @@ ${linkIndicacao}`;
 
         <div className="flex flex-col gap-3">
 
-          <a
-            href={linkAgendamento}
-            target="_blank"
-            className="bg-purple-600 hover:bg-purple-700 p-3 rounded-xl text-center font-bold"
+          <button
+            onClick={abrirPaginaAgendamento}
+            className="bg-purple-600 hover:bg-purple-700 p-3 rounded-xl font-bold"
           >
             🌐 Abrir Página
-          </a>
+          </button>
 
           <button
-            onClick={() => copiarLink(linkAgendamento)}
+            onClick={copiarLinkAgendamento}
             className="bg-zinc-700 hover:bg-zinc-600 p-3 rounded-xl font-bold"
           >
             📋 Copiar Link
@@ -123,8 +145,6 @@ ${linkIndicacao}`;
 
       </div>
 
-      {/* INDICAÇÃO */}
-
       <div className="bg-zinc-900 rounded-2xl p-5">
 
         <h2 className="text-lg font-bold text-yellow-400 mb-2">
@@ -132,13 +152,13 @@ ${linkIndicacao}`;
         </h2>
 
         <p className="text-sm text-gray-400 mb-4">
-          Ganhe 1 mês Premium para cada empresa que assinar usando seu link.
+          Ganhe 1 mês Premium para cada empresa indicada.
         </p>
 
         <div className="flex flex-col gap-3">
 
           <button
-            onClick={() => copiarLink(linkIndicacao)}
+            onClick={copiarLinkIndicacao}
             className="bg-cyan-600 hover:bg-cyan-700 p-3 rounded-xl font-bold"
           >
             📋 Copiar Link de Indicação
