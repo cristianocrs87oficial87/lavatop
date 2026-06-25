@@ -5,6 +5,8 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
 import BannerPremium from '@/components/BannerPremium'
+import PainelPremium from '@/components/PainelPremium'
+import CardsDashboard from "@/components/CardsDashboard"
 
 
 export default function Admin() {
@@ -331,39 +333,14 @@ const cancelados = agendamentos.filter(
   {/* Conteúdo Principal */}
   <div className="lg:col-span-3">
 
-    <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6 mb-6">
-
-      <div className="bg-yellow-600 p-6 rounded-2xl">
-        <p className="text-xl">Pendentes</p>
-        <h2 className="text-4xl font-bold">{pendentes}</h2>
-      </div>
-
-      <div className="bg-blue-600 p-6 rounded-2xl">
-        <p className="text-xl">Confirmados</p>
-        <h2 className="text-4xl font-bold">{confirmados}</h2>
-      </div>
-
-      <div className="bg-orange-600 p-6 rounded-2xl">
-        <p className="text-xl">Em Andamento</p>
-        <h2 className="text-4xl font-bold">{emAndamento}</h2>
-      </div>
-
-      <div className="bg-green-600 p-6 rounded-2xl">
-        <p className="text-xl">Finalizados</p>
-        <h2 className="text-4xl font-bold">{finalizados}</h2>
-      </div>
-
-      <div className="bg-red-600 p-6 rounded-2xl">
-        <p className="text-xl">Cancelados</p>
-        <h2 className="text-4xl font-bold">{cancelados}</h2>
-      </div>
-
-      <div className="bg-zinc-800 p-6 rounded-2xl">
-        <p className="text-xl">Total Agendamentos</p>
-        <h2 className="text-4xl font-bold">{total}</h2>
-      </div>
-
-    </div>
+    <CardsDashboard
+  pendentes={pendentes}
+  confirmados={confirmados}
+  andamento={emAndamento}
+  finalizados={finalizados}
+  cancelados={cancelados}
+  total={agendamentos.length}
+/>
 
     <div className="bg-zinc-900 p-6 rounded-2xl">
       <h2 className="text-3xl font-bold mb-6">
@@ -439,85 +416,13 @@ const cancelados = agendamentos.filter(
 
   </div>
 
-  {/* Sidebar */}
-  <div className="bg-zinc-900 p-5 rounded-2xl border border-zinc-700 h-fit sticky top-6">
-
-    <h3 className="text-2xl font-bold mb-2">
-  {empresa?.premium ? "🟢 Premium" : "🟡 Teste Gratuito"}
-</h3>
-
-<p className="text-zinc-400 mb-6">
-  Painel de recursos
-</p>
-
-<h4 className="text-lg font-bold text-white mb-4">
-  Recursos da Conta
-</h4>
-
+{/* Sidebar */}
 <div className="space-y-3">
-
-      {!empresa?.premium && (
-  <Link href="/admin/planos">
-    <button className="w-full bg-yellow-500 hover:bg-yellow-600 text-black font-bold py-3 rounded-xl mb-6">
-      🚀 Assinar Premium
-    </button>
-  </Link>
-)}
-
-      <div className="bg-zinc-800 border border-cyan-500 p-4 rounded-xl">
-        <h4 className="font-bold text-cyan-400 mb-2">
-          💰 Ganhe 1 mês grátis por indicação
-        </h4>
-
-        <p className="text-sm text-zinc-300 mb-3">
-          Ganhe 1 mês Premium grátis para cada empresa que assinar através do seu link.
-        </p>
-
-        <button className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-2 rounded-lg mb-2">
-          📋 Copiar Link
-        </button>
-
-        <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-2 rounded-lg">
-          📲 Compartilhar WhatsApp
-        </button>
-      </div>
-
-      <Link href="/admin/fidelidade">
-        <button className="w-full bg-cyan-500 hover:bg-cyan-600 text-black font-bold py-3 rounded-xl">
-          ⭐ Programa Fidelidade
-        </button>
-      </Link>
-
-      <Link href={`/agendamento/${empresa?.id}`}>
-        <button className="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl">
-          📅 Abrir Página de Agendamento
-        </button>
-      </Link>
-
-      <button
-  onClick={copiarLinkAgendamento}
-  className="w-full bg-zinc-700 hover:bg-zinc-600 text-white font-bold py-3 rounded-xl"
->
-  📋 Copiar Link de Agendamento
-</button>
-      <Link href="/admin/configuracoes">
-        <button className="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-xl">
-          ⚙️ Configurar Empresa
-        </button>
-      </Link>
-
-      <Link href="/admin/clientes-fidelidade">
-        <button className="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl">
-          👥 Clientes Fidelidade
-        </button>
-      </Link>
-
-    </div>
-
-  </div>
+  <PainelPremium empresa={empresa} />
+</div>
 
 </div>
 
 </main>
-);
+)
 }
