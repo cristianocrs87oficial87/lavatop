@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { supabase } from "@/lib/supabase";
-import BannerPremium from '@/components/BannerPremium'
-import PainelPremium from '@/components/PainelPremium'
 import CardsDashboard from "@/components/CardsDashboard"
 import ListaAgendamentos from "@/components/ListaAgendamentos";
 import SidebarAdmin from "@/components/SidebarAdmin";
@@ -328,7 +326,6 @@ const cancelados = agendamentos.filter(
           Sair
         </button>
       </div>
-       <BannerPremium empresa={empresa} />
 
 <div className="grid lg:grid-cols-4 gap-6">
 
@@ -355,7 +352,7 @@ const cancelados = agendamentos.filter(
 
   <SidebarAdmin empresa={empresa} />
 
-  <PainelPremium empresa={empresa} />
+
 
 </div>
 
