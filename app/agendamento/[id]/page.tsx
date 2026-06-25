@@ -93,36 +93,6 @@ export default async function AgendamentoPage({
 
             </div>
 
-            <div className="mb-10">
-
-              <h2 className="text-2xl font-bold mb-4">
-                🚘 Serviços Disponíveis
-              </h2>
-
-              <div className="grid md:grid-cols-2 gap-4">
-
-                {servicos?.map((servico: any) => (
-                  <div
-                    key={servico.id}
-                    className="bg-zinc-800 rounded-2xl p-5 border border-zinc-700"
-                  >
-                    <h3 className="text-xl font-bold">
-                      {servico.nome}
-                    </h3>
-
-                    <p className="mt-2 text-green-400 font-bold">
-                      R$ {servico.preco}
-                    </p>
-
-                    <p className="text-zinc-400">
-                      ⏱ {servico.duracao} minutos
-                    </p>
-                  </div>
-                ))}
-
-              </div>
-
-            </div>
 
             <div
               className="rounded-2xl p-6"
@@ -143,24 +113,25 @@ export default async function AgendamentoPage({
 
           </div>
 
-        </div>
+    </div>
 
-      </div>
-
+    {empresa.whatsapp && (
       <a
-        href={`https://wa.me/55${
-  (empresa.whatsapp || empresa.telefone || "")
-    .replace(/\D/g, "")
-}`}
+        href={`https://wa.me/55${empresa.whatsapp.replace(/\D/g, "")}`}
         target="_blank"
         rel="noopener noreferrer"
         className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-full shadow-2xl transition-all duration-300"
       >
         <FaWhatsapp size={28} />
         <span className="font-semibold">
-          Fale Conosco
+          Falar no WhatsApp
         </span>
       </a>
+    )}
+
+  </div>
+);
+
 
     </div>
   );
