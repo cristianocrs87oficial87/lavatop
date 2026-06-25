@@ -32,6 +32,13 @@ export default function Admin() {
       } = await supabase.auth.getUser();
 
       if (!user) return;
+      await supabase
+  .from("empresas")
+  .update({
+    ultimo_acesso: new Date().toISOString(),
+    ultimo_login: new Date().toISOString(),
+  })
+  .eq("usuario_id", user.id);
 
       const { data: empresa } = await supabase
   .from("empresas")
