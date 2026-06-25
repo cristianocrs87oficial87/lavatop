@@ -289,11 +289,23 @@ setHorariosOcupados(ocupados);
         Agendar Serviço
       </h2>
 
-      <div className="space-y-3">
-        {servicos.map((servico) => (
+      {!servicoSelecionado && (
+  <div className="space-y-3">
+    {servicos.map((servico) => (
           <button
             key={servico.id}
-            onClick={() => setServicoSelecionado(servico)}
+            onClick={() => {
+  setServicoSelecionado(servico);
+
+  setTimeout(() => {
+    document
+      .getElementById("formulario-agendamento")
+      ?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+  }, 100);
+}}
             className={`w-full text-left border rounded-lg p-4 transition ${
               servicoSelecionado?.id === servico.id
                 ? "border-green-500 bg-green-500/10"
@@ -312,11 +324,15 @@ setHorariosOcupados(ocupados);
               {servico.duracao} minutos
             </div>
           </button>
-        ))}
-      </div>
+              ))}
+    </div>
+)}
 
       {servicoSelecionado && (
-        <div className="mt-6">
+  <div
+    id="formulario-agendamento"
+    className="mt-6"
+  >
           <label className="block mb-2 font-bold">
             Escolha a Data
           </label>
