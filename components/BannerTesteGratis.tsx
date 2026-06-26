@@ -30,7 +30,7 @@ export default function BannerTesteGratis({
 
   if (premium) {
     cor = "border-green-500";
-    titulo = "👑 Plano LavaTop Pro Ativo";
+    titulo = "👑 LavaTop Pro Ativo";
     texto = "text-green-400";
   } else if (diasRestantes <= 2) {
     cor = "border-red-500";
@@ -42,13 +42,13 @@ export default function BannerTesteGratis({
 
   return (
     <div
-      className={`bg-zinc-900 border ${cor} rounded-2xl p-6 mb-6`}
+      className={`bg-zinc-900 border-2 ${cor} rounded-2xl p-5 mb-6 shadow-lg`}
     >
       <h2 className={`text-2xl font-bold ${texto}`}>
         {titulo}
       </h2>
 
-      <p className="text-zinc-300 mt-3">
+      <p className="text-zinc-300 mt-2">
         📅 Válido até{" "}
         <strong>
           {validade.toLocaleDateString("pt-BR")}
@@ -56,30 +56,38 @@ export default function BannerTesteGratis({
       </p>
 
       {premium ? (
-        <p className="text-green-400 mt-3 font-semibold">
-          ✅ Todos os recursos do LavaTop Pro estão
-          liberados.
-        </p>
-      ) : (
         <>
-          <p className={`mt-3 font-semibold ${texto}`}>
-            ⏳ Restam{" "}
-            <strong>{diasRestantes} dias</strong> de
-            teste.
+          <p className="text-green-400 mt-3 font-semibold">
+            ✅ Seu LavaTop Pro está ativo.
           </p>
 
           <p className="text-zinc-300 mt-2">
-            Aproveite todos os recursos do LavaTop Pro.
-            Após o término do teste será necessário
-            assinar um plano para continuar utilizando
-            o sistema.
+            Todos os recursos premium estão liberados para sua empresa.
           </p>
+        </>
+      ) : (
+        <>
+          <p className={`mt-4 text-lg font-bold ${texto}`}>
+            ⏳ Seu teste termina em{" "}
+            <strong>{diasRestantes} dias</strong>.
+          </p>
+
+          <p className="text-zinc-300 mt-3">
+            Continue utilizando todos os recursos do LavaTop sem interrupções.
+          </p>
+
+          <div className="mt-4 space-y-2 text-sm text-zinc-200">
+            <p>✅ Agendamentos ilimitados</p>
+            <p>✅ Programa Fidelidade</p>
+            <p>✅ WhatsApp Automático</p>
+            <p>✅ Painel completo de gestão</p>
+          </div>
 
           <Link
             href="/admin/planos"
-            className="mt-5 inline-block bg-yellow-500 hover:bg-yellow-600 text-black font-bold px-6 py-3 rounded-xl transition"
+            className="mt-6 w-full text-center inline-block bg-yellow-500 hover:bg-yellow-400 text-black font-bold py-3 rounded-xl transition"
           >
-            👑 Assinar LavaTop Pro
+            🚀 Ativar LavaTop Pro
           </Link>
         </>
       )}
