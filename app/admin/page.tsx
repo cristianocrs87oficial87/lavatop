@@ -328,13 +328,6 @@ console.log("EMPRESA:", empresa);
     </p>
   </div>
 
-  <button
-    onClick={sair}
-    className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl font-semibold"
-  >
-    Sair
-  </button>
-
 </div>
 <BannerTesteGratis
   premium={empresa?.premium || false}
@@ -363,7 +356,10 @@ console.log("EMPRESA:", empresa);
 {/* Sidebar */}
 <div className="space-y-4">
 
-  <SidebarAdmin empresa={empresa} />
+  <SidebarAdmin
+  empresa={empresa}
+  sair={sair}
+/>
 
 
 

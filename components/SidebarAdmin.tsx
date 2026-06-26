@@ -4,9 +4,14 @@ import Link from "next/link";
 
 type Props = {
   empresa: any;
+  sair: () => void;
 };
 
-export default function SidebarAdmin({ empresa }: Props) {
+export default function SidebarAdmin({
+  empresa,
+  sair,
+}: Props) {
+    
   function abrirPaginaAgendamento() {
     if (!empresa?.id) {
       alert("Empresa não encontrada.");
