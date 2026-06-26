@@ -175,6 +175,15 @@ setTimeout(() => {
   const dataPremium = premiumAte
   ? new Date(premiumAte).toLocaleDateString("pt-BR")
   : null;
+  const diasRestantes = premiumAte
+  ? Math.max(
+      0,
+      Math.ceil(
+        (new Date(premiumAte).getTime() - Date.now()) /
+          (1000 * 60 * 60 * 24)
+      )
+    )
+  : 0;
   return (
     <>
     {mostrarPix && (
@@ -232,17 +241,21 @@ setTimeout(() => {
     Plano Atual
   </h2>
 
-  <p className="text-2xl font-bold text-green-400">
-  {premium ? "⭐ Premium Ativo" : "🆓 Teste Grátis"}
+  <p className={`text-2xl font-bold ${premium ? "text-yellow-400" : "text-green-400"}`}>
+  {premium ? "👑 Plano LavaTop Pro" : "🆓 Teste Grátis"}
 </p>
 
-  <p className="text-zinc-300 mt-2">
-  Válido até: {dataPremium || "-"}
+<p className="text-zinc-300 mt-2">
+  📅 Válido até: <strong>{dataPremium || "-"}</strong>
 </p>
 
-{premium && (
-  <p className="text-green-400 mt-2">
-    ✔ Todos os recursos Premium liberados
+{premium ? (
+  <p className="text-green-400 mt-2 font-semibold">
+    ✔ Assinatura ativa.
+  </p>
+) : (
+  <p className="text-cyan-400 mt-2 font-semibold">
+    ⏳ Restam {diasRestantes} dia{diasRestantes !== 1 ? "s" : ""} de teste.
   </p>
 )}
 </div>
