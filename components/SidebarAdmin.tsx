@@ -81,13 +81,6 @@ ${link}`;
         <div className="flex flex-col gap-3">
 
           <Link
-            href="/admin"
-            className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
-          >
-            🏠 Dashboard
-          </Link>
-
-          <Link
             href="/admin/configuracoes"
             className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
           >
