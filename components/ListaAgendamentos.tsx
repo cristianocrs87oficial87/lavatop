@@ -20,9 +20,9 @@ export default function ListaAgendamentos({
   excluirAgendamento,
 }: Props) {
   return (
-    <div className="bg-zinc-900 rounded-2xl p-5 mt-6">
+    <div className="bg-zinc-900 rounded-2xl p-6 mt-6 shadow-lg">
 
-      <h2 className="text-2xl font-bold mb-5">
+      <h2 className="text-3xl font-bold mb-6">
         📅 Lista de Agendamentos
       </h2>
 
@@ -31,43 +31,58 @@ export default function ListaAgendamentos({
           Nenhum agendamento encontrado.
         </p>
       ) : (
-        <div className="space-y-4">
+        <div className="space-y-5">
+
           {agendamentos.map((item) => (
             <div
               key={item.id}
-              className="bg-zinc-800 rounded-2xl p-4 border border-zinc-700 shadow-md"
+              className="bg-zinc-800 border border-zinc-700 rounded-2xl p-5 shadow-lg"
             >
-              <div className="flex justify-between items-start gap-3">
+
+              <div className="flex justify-between items-start gap-4">
 
                 <div className="flex-1">
 
-                  <h3 className="text-lg font-bold">
+                  <h3 className="text-2xl font-bold text-white">
                     👤 {item.cliente}
                   </h3>
 
-                  <p className="text-zinc-300 mt-2">
-                    📅{" "}
-                    {item.data_agendamento
-                      ? item.data_agendamento
-                          .split("-")
-                          .reverse()
-                          .join("/")
-                      : "Não informada"}{" "}
-                    • {item.hora_agendamento || "--:--"}
-                  </p>
+                  <div className="mt-3 space-y-2 text-zinc-300">
 
-                  <p className="text-zinc-300">
-                    🚗 {item.servico}
-                  </p>
+                    <p className="flex items-center gap-2">
+                      📅
+                      <span>
+                        {item.data_agendamento
+                          ? item.data_agendamento
+                              .split("-")
+                              .reverse()
+                              .join("/")
+                          : "Não informada"}
+                      </span>
 
-                  <p className="text-zinc-300">
-                    📞 {item.telefone}
-                  </p>
+                      <span className="text-zinc-500">•</span>
+
+                      <span>
+                        {item.hora_agendamento
+                          ? item.hora_agendamento.substring(0, 5)
+                          : "--:--"}
+                      </span>
+                    </p>
+
+                    <p>
+                      🚗 {item.servico}
+                    </p>
+
+                    <p>
+                      📞 {item.telefone}
+                    </p>
+
+                  </div>
 
                 </div>
 
                 <span
-                  className={`text-xs px-3 py-1 rounded-full font-bold ${
+                  className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
                     statusCor[item.status] || "bg-zinc-600"
                   }`}
                 >
@@ -76,14 +91,14 @@ export default function ListaAgendamentos({
 
               </div>
 
-              <div className="mt-4 flex flex-col md:flex-row gap-3">
+              <div className="mt-6 flex flex-col md:flex-row gap-3">
 
                 <select
                   value={item.status || "Pendente"}
                   onChange={(e) =>
                     alterarStatus(item.id, e.target.value)
                   }
-                  className="bg-zinc-700 rounded-xl px-3 py-2 flex-1"
+                  className="bg-zinc-700 hover:bg-zinc-600 rounded-xl px-4 py-3 flex-1 transition"
                 >
                   <option>Pendente</option>
                   <option>Confirmado</option>
@@ -94,7 +109,7 @@ export default function ListaAgendamentos({
 
                 <button
                   onClick={() => excluirAgendamento(item.id)}
-                  className="bg-zinc-700 hover:bg-red-600 transition rounded-xl px-4 py-2"
+                  className="bg-zinc-700 hover:bg-red-600 transition rounded-xl px-6 py-3 font-semibold"
                 >
                   🗑 Excluir
                 </button>
@@ -103,9 +118,9 @@ export default function ListaAgendamentos({
 
             </div>
           ))}
+
         </div>
       )}
-
     </div>
   );
 }
