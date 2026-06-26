@@ -72,11 +72,52 @@ ${link}`;
   return (
   <div className="space-y-4">
 
-    {/* MENU */}
+    {/* DIVULGAÇÃO */}
     <div className="bg-zinc-900 rounded-2xl p-5">
 
       <h2 className="text-xl font-bold text-cyan-400 mb-5">
-        📋 Menu
+        🚀 Divulgação
+      </h2>
+
+      <div className="flex flex-col gap-3">
+
+        <button
+          onClick={abrirPaginaAgendamento}
+          className="bg-purple-600 hover:bg-purple-700 p-3 rounded-xl font-bold"
+        >
+          🌐 Abrir Página de Agendamento
+        </button>
+
+        <button
+          onClick={copiarLinkAgendamento}
+          className="bg-zinc-700 hover:bg-zinc-600 p-3 rounded-xl font-bold"
+        >
+          🔗 Copiar Link de Agendamento
+        </button>
+
+        <button
+          onClick={copiarLinkIndicacao}
+          className="bg-cyan-600 hover:bg-cyan-700 p-3 rounded-xl font-bold"
+        >
+          🤝 Copiar Link de Indicação
+        </button>
+
+        <button
+          onClick={compartilharWhatsapp}
+          className="bg-green-600 hover:bg-green-700 p-3 rounded-xl font-bold"
+        >
+          📲 Compartilhar no WhatsApp
+        </button>
+
+      </div>
+
+    </div>
+
+    {/* GESTÃO DA EMPRESA */}
+    <div className="bg-zinc-900 rounded-2xl p-5">
+
+      <h2 className="text-xl font-bold text-yellow-400 mb-5">
+        ⚙️ Gestão da Empresa
       </h2>
 
       <div className="flex flex-col gap-3">
@@ -108,64 +149,6 @@ ${link}`;
         >
           👥 Clientes Fidelidade
         </Link>
-
-      </div>
-
-    </div>
-
-    {/* PÁGINA DE AGENDAMENTO */}
-    <div className="bg-zinc-900 rounded-2xl p-5">
-
-      <h2 className="text-lg font-bold text-cyan-400 mb-4">
-        🌐 Página de Agendamento
-      </h2>
-
-      <div className="flex flex-col gap-3">
-
-        <button
-          onClick={abrirPaginaAgendamento}
-          className="bg-purple-600 hover:bg-purple-700 p-3 rounded-xl font-bold"
-        >
-          🌐 Abrir Página de Agendamento
-        </button>
-
-        <button
-          onClick={copiarLinkAgendamento}
-          className="bg-zinc-700 hover:bg-zinc-600 p-3 rounded-xl font-bold"
-        >
-          🔗 Copiar Link de Agendamento
-        </button>
-
-      </div>
-
-    </div>
-
-    {/* COMPARTILHE E GANHE */}
-    <div className="bg-zinc-900 rounded-2xl p-5">
-
-      <h2 className="text-lg font-bold text-yellow-400 mb-2">
-        🤝 Compartilhe e Ganhe
-      </h2>
-
-      <p className="text-sm text-gray-400 mb-4">
-        Indique outra empresa e ganhe <strong>30 dias grátis do Plano LavaTop Pro</strong> quando ela assinar.
-      </p>
-
-      <div className="flex flex-col gap-3">
-
-        <button
-          onClick={copiarLinkIndicacao}
-          className="bg-cyan-600 hover:bg-cyan-700 p-3 rounded-xl font-bold"
-        >
-          🤝 Copiar Link de Indicação
-        </button>
-
-        <button
-          onClick={compartilharWhatsapp}
-          className="bg-green-600 hover:bg-green-700 p-3 rounded-xl font-bold"
-        >
-          📲 Compartilhar no WhatsApp
-        </button>
 
       </div>
 
