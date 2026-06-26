@@ -39,7 +39,7 @@ export default function ListaAgendamentos({
               className="bg-zinc-800 border border-zinc-700 rounded-2xl p-5 shadow-lg"
             >
 
-              <div className="flex justify-between items-start gap-4">
+              <div className="flex flex-col md:flex-row md:justify-between md:items-start gap-4">
 
                 <div className="flex-1">
 
@@ -82,10 +82,10 @@ export default function ListaAgendamentos({
                 </div>
 
                 <span
-                  className={`px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
-                    statusCor[item.status] || "bg-zinc-600"
-                  }`}
-                >
+  className={`self-start md:self-auto px-4 py-2 rounded-full text-sm font-bold whitespace-nowrap ${
+    statusCor[item.status] || "bg-zinc-600"
+  }`}
+>
                   {item.status || "Pendente"}
                 </span>
 
