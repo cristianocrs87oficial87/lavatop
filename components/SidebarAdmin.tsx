@@ -91,7 +91,7 @@ ${link}`;
             href="/admin/configuracoes"
             className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
           >
-            ⚙ Configurações
+            ⚙️ Configuração da Empresa
           </Link>
 
           <Link
