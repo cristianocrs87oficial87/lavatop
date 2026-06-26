@@ -16,36 +16,36 @@ export default function CardsDashboard({
   total,
 }: Props) {
   return (
-    <div className="grid grid-cols-2 xl:grid-cols-3 gap-4">
+    <div className="grid grid-cols-2 xl:grid-cols-3 gap-3 mb-6">
 
-      <div className="bg-yellow-600 p-6 rounded-xl">
-        <p>Pendentes</p>
-        <h2 className="text-4xl font-bold">{pendentes}</h2>
+      <div className="bg-yellow-600 rounded-2xl p-4 shadow-lg">
+        <p className="text-sm opacity-90">Pendentes</p>
+        <h2 className="text-3xl font-bold mt-1">{pendentes}</h2>
       </div>
 
-      <div className="bg-blue-600 p-6 rounded-xl">
-        <p>Confirmados</p>
-        <h2 className="text-4xl font-bold">{confirmados}</h2>
+      <div className="bg-blue-600 rounded-2xl p-4 shadow-lg">
+        <p className="text-sm opacity-90">Confirmados</p>
+        <h2 className="text-3xl font-bold mt-1">{confirmados}</h2>
       </div>
 
-      <div className="bg-orange-600 p-6 rounded-xl">
-        <p>Em andamento</p>
-        <h2 className="text-4xl font-bold">{andamento}</h2>
+      <div className="bg-orange-600 rounded-2xl p-4 shadow-lg">
+        <p className="text-sm opacity-90">Em andamento</p>
+        <h2 className="text-3xl font-bold mt-1">{andamento}</h2>
       </div>
 
-      <div className="bg-green-600 p-6 rounded-xl">
-        <p>Finalizados</p>
-        <h2 className="text-4xl font-bold">{finalizados}</h2>
+      <div className="bg-green-600 rounded-2xl p-4 shadow-lg">
+        <p className="text-sm opacity-90">Finalizados</p>
+        <h2 className="text-3xl font-bold mt-1">{finalizados}</h2>
       </div>
 
-      <div className="bg-red-600 p-6 rounded-xl">
-        <p>Cancelados</p>
-        <h2 className="text-4xl font-bold">{cancelados}</h2>
+      <div className="bg-red-600 rounded-2xl p-4 shadow-lg">
+        <p className="text-sm opacity-90">Cancelados</p>
+        <h2 className="text-3xl font-bold mt-1">{cancelados}</h2>
       </div>
 
-      <div className="bg-zinc-800 p-6 rounded-xl">
-        <p>Total Agendamentos</p>
-        <h2 className="text-4xl font-bold">{total}</h2>
+      <div className="bg-zinc-800 rounded-2xl p-4 shadow-lg">
+        <p className="text-sm opacity-90">Total</p>
+        <h2 className="text-3xl font-bold mt-1">{total}</h2>
       </div>
 
     </div>
