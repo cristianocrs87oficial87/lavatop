@@ -7,6 +7,7 @@ import { supabase } from "@/lib/supabase";
 import CardsDashboard from "@/components/CardsDashboard"
 import ListaAgendamentos from "@/components/ListaAgendamentos";
 import SidebarAdmin from "@/components/SidebarAdmin";
+import BannerTesteGratis from "@/components/BannerTesteGratis";
 
 
 export default function Admin() {
