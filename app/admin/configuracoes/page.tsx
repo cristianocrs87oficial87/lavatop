@@ -9,6 +9,7 @@ export default function Configuracoes() {
   const [nome, setNome] = useState("");
   const [telefone, setTelefone] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
+  const [instagram, setInstagram] = useState("");
   const [abre, setAbre] = useState("08:00");
   const [fecha, setFecha] = useState("18:00");
   const [logoUrl, setLogoUrl] = useState("");
@@ -30,6 +31,7 @@ const [mensagemCliente, setMensagemCliente] = useState(
 const [novoServico, setNovoServico] = useState("");
 const [novoPreco, setNovoPreco] = useState("");
 const [novaDuracao, setNovaDuracao] = useState("");
+
 
 
 
@@ -113,8 +115,9 @@ async function uploadBanner(
 
     setNome(empresa.nome || "");
     setTelefone(empresa.telefone || "");
-    setWhatsapp(empresa.whatsapp || "");
-    setAbre(empresa.abre || "08:00");
+setWhatsapp(empresa.whatsapp || "");
+setInstagram(empresa.instagram || "");
+setAbre(empresa.abre || "08:00");
     setFecha(empresa.fecha || "18:00");
     setLogoUrl(empresa.logo_url || "");
 setBannerUrl(empresa.banner_url || "");
@@ -298,10 +301,16 @@ async function salvar() {
           .from("empresas")
           .update({
   nome,
-  telefone,
-  whatsapp,
-  abre,
-  fecha,
+telefone,
+whatsapp,
+instagram: instagram
+  .replace("https://www.instagram.com/", "")
+  .replace("https://instagram.com/", "")
+  .replace("@", "")
+  .replaceAll("/", "")
+  .trim(),
+abre,
+fecha,
 
   dias_funcionamento: diasFuncionamento,
 
@@ -320,11 +329,11 @@ async function salvar() {
           .insert([
   {
     nome,
-    telefone,
-    whatsapp,
-    abre,
-    fecha,
-
+telefone,
+whatsapp,
+instagram,
+abre,
+fecha,
     dias_funcionamento: diasFuncionamento,
 
     logo_url: logoUrl,
@@ -624,6 +633,21 @@ router.push("/admin");
     setWhatsapp(e.target.value)
   }
   placeholder="(12) 99123-4567"
+  className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
+/>
+<label className="block mb-2 font-bold">
+  📷 Instagram
+</label>
+
+<p className="text-sm text-gray-400 mb-2">
+  Informe apenas o usuário do Instagram.
+</p>
+
+<input
+  type="text"
+  value={instagram}
+  onChange={(e) => setInstagram(e.target.value)}
+  placeholder="@meulavarapido"
   className="w-full p-3 rounded-lg bg-zinc-800 border border-zinc-700 text-white mb-6"
 />
 

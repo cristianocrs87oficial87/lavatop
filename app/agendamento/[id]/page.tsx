@@ -1,4 +1,7 @@
-import { FaWhatsapp } from "react-icons/fa";
+import {
+  FaWhatsapp,
+  FaInstagram,
+} from "react-icons/fa";
 import { supabase } from "@/lib/supabase";
 import AgendamentoCliente from "@/components/AgendamentoCliente";
 
@@ -115,19 +118,43 @@ export default async function AgendamentoPage({
 
     </div>
 
+    <div className="mt-12 border-t border-zinc-800 pt-8">
+
+  <p className="text-center text-zinc-400 mb-4">
+    Entre em contato
+  </p>
+
+  <div className="flex justify-center gap-6">
+
     {empresa.whatsapp && (
       <a
         href={`https://wa.me/55${empresa.whatsapp.replace(/\D/g, "")}`}
         target="_blank"
         rel="noopener noreferrer"
-        className="fixed bottom-6 right-6 z-50 flex items-center gap-2 bg-green-500 hover:bg-green-600 text-white px-5 py-3 rounded-full shadow-2xl transition-all duration-300"
+        className="text-green-500 hover:scale-110 transition"
       >
-        <FaWhatsapp size={28} />
-        <span className="font-semibold">
-          Falar no WhatsApp
-        </span>
+        <FaWhatsapp size={34} />
       </a>
     )}
+
+    {empresa.instagram && (
+      <a
+        href={`https://instagram.com/${empresa.instagram
+          .replace("@", "")
+          .replace("https://instagram.com/", "")
+          .replace("https://www.instagram.com/", "")
+          .replaceAll("/", "")}`}
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-pink-500 hover:scale-110 transition"
+      >
+        <FaInstagram size={32} />
+      </a>
+    )}
+
+  </div>
+
+</div>
 
   </div>
 );
