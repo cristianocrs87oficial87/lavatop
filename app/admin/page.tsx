@@ -315,24 +315,32 @@ const cancelados = agendamentos.filter(
 ).length;
 console.log("EMPRESA:", empresa);
   return (
-    <main className="min-h-screen bg-black p-10 text-white">
-      <div className="flex justify-between items-center mb-10">
-        <h1 className="text-5xl font-bold text-cyan-400">
-          Painel Admin
-        </h1>
+    <main className="min-h-screen bg-black text-white p-4 md:p-6 lg:p-10">
+      <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-4 mb-6">
 
-        <button
-          onClick={sair}
-          className="bg-red-600 hover:bg-red-700 px-5 py-3 rounded-xl font-bold"
-        >
-          Sair
-        </button>
-      </div>
+  <div>
+    <h1 className="text-3xl md:text-5xl font-bold text-cyan-400">
+      🚗 Painel Admin
+    </h1>
+
+    <p className="text-zinc-400 mt-1">
+      Gerencie seus agendamentos e acompanhe sua empresa.
+    </p>
+  </div>
+
+  <button
+    onClick={sair}
+    className="bg-red-600 hover:bg-red-700 px-4 py-2 rounded-xl font-semibold"
+  >
+    Sair
+  </button>
+
+</div>
 <BannerTesteGratis
   premium={empresa?.premium || false}
   premiumAte={empresa?.premium_ate || null}
 />
-<div className="grid lg:grid-cols-4 gap-6">
+<div className="grid grid-cols-1 lg:grid-cols-4 gap-5">
 
   {/* Conteúdo Principal */}
   <div className="lg:col-span-3">
