@@ -11,7 +11,6 @@ export default function SidebarAdmin({
   empresa,
   sair,
 }: Props) {
-    
   function abrirPaginaAgendamento() {
     if (!empresa?.id) {
       alert("Empresa não encontrada.");
@@ -59,8 +58,7 @@ export default function SidebarAdmin({
     const link =
       `${window.location.origin}/cadastro?ref=${empresa.id}`;
 
-    const texto =
-`🚗 Conheça o LavaTop!
+    const texto = `🚗 Conheça o LavaTop!
 
 Sistema completo para Lava Rápido.
 
@@ -75,107 +73,117 @@ ${link}`;
   }
 
   return (
-  <div className="space-y-4">
+    <div className="space-y-5">
 
-    {/* DIVULGAÇÃO */}
-    <div className="bg-zinc-900 rounded-2xl p-5">
+      {/* DIVULGAÇÃO */}
+      <div className="bg-zinc-900 rounded-2xl p-5">
 
-      <h2 className="text-xl font-bold text-cyan-400 mb-5">
-        🚀 Divulgação
-      </h2>
+        <h2 className="text-xl font-bold text-cyan-400 mb-5">
+          🚀 Divulgação
+        </h2>
 
-      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
 
-        <button
-          onClick={abrirPaginaAgendamento}
-          className="bg-purple-600 hover:bg-purple-700 p-3 rounded-xl font-bold"
-        >
-          🌐 Abrir Página de Agendamento
-        </button>
+          <button
+            onClick={abrirPaginaAgendamento}
+            className="bg-gradient-to-r from-purple-600 to-fuchsia-600 hover:opacity-90 p-3 rounded-xl font-bold transition"
+          >
+            🌐 Abrir Página de Agendamento
+          </button>
 
-        <button
-          onClick={copiarLinkAgendamento}
-          className="bg-zinc-700 hover:bg-zinc-600 p-3 rounded-xl font-bold"
-        >
-          🔗 Copiar Link de Agendamento
-        </button>
+          <button
+            onClick={copiarLinkAgendamento}
+            className="bg-zinc-700 hover:bg-zinc-600 p-3 rounded-xl font-bold transition"
+          >
+            🔗 Copiar Link de Agendamento
+          </button>
 
-      </div>
-
-    </div>
-
-    {/* INDIQUE O LAVATOP */}
-    <div className="bg-zinc-900 rounded-2xl p-5">
-
-      <h2 className="text-xl font-bold text-green-400 mb-2">
-        🤝 Indique o LavaTop
-      </h2>
-
-      <p className="text-sm text-gray-400 mb-4">
-        Indique o LavaTop para outro lava-rápido e ganhe <strong>30 dias grátis do Plano LavaTop Pro</strong> quando ele assinar.
-      </p>
-
-      <div className="flex flex-col gap-3">
-
-        <button
-          onClick={copiarLinkIndicacao}
-          className="bg-cyan-600 hover:bg-cyan-700 p-3 rounded-xl font-bold"
-        >
-          👥 Copiar Link de Indicação do LavaTop
-        </button>
-
-        <button
-          onClick={compartilharWhatsapp}
-          className="bg-green-600 hover:bg-green-700 p-3 rounded-xl font-bold"
-        >
-          📲 Indicar o LavaTop pelo WhatsApp
-        </button>
+        </div>
 
       </div>
 
-    </div>
+      {/* INDIQUE O LAVATOP */}
+      <div className="bg-zinc-900 rounded-2xl p-5">
 
-    {/* GESTÃO DA EMPRESA */}
-    <div className="bg-zinc-900 rounded-2xl p-5">
+        <h2 className="text-xl font-bold text-green-400 mb-2">
+          🤝 Indique o LavaTop
+        </h2>
 
-      <h2 className="text-xl font-bold text-yellow-400 mb-5">
-        ⚙️ Gestão da Empresa
-      </h2>
+        <p className="text-sm text-zinc-400 mb-4">
+          Indique o LavaTop para outro lava-rápido e ganhe{" "}
+          <strong>30 dias grátis do Plano LavaTop Pro</strong>{" "}
+          quando ele assinar.
+        </p>
 
-      <div className="flex flex-col gap-3">
+        <div className="flex flex-col gap-3">
 
-        <Link
-          href="/admin/configuracoes"
-          className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
-        >
-          ⚙️ Configuração da Empresa
-        </Link>
+          <button
+            onClick={copiarLinkIndicacao}
+            className="bg-cyan-600 hover:bg-cyan-700 p-3 rounded-xl font-bold transition"
+          >
+            👥 Copiar Link de Indicação do LavaTop
+          </button>
 
-        <Link
-          href="/admin/planos"
-          className="bg-zinc-800 hover:bg-yellow-500 p-3 rounded-xl font-semibold"
-        >
-          👑 Plano LavaTop Pro
-        </Link>
+          <button
+            onClick={compartilharWhatsapp}
+            className="bg-green-600 hover:bg-green-700 p-3 rounded-xl font-bold transition"
+          >
+            📲 Indicar o LavaTop pelo WhatsApp
+          </button>
 
-        <Link
-          href="/admin/fidelidade"
-          className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
-        >
-          🎁 Programa Fidelidade
-        </Link>
-
-        <Link
-          href="/admin/clientes-fidelidade"
-          className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold"
-        >
-          👥 Clientes Fidelidade
-        </Link>
+        </div>
 
       </div>
 
-    </div>
+      {/* GESTÃO */}
+      <div className="bg-zinc-900 rounded-2xl p-5">
 
-  </div>
-);
+        <h2 className="text-xl font-bold text-yellow-400 mb-5">
+          ⚙️ Gestão da Empresa
+        </h2>
+
+        <div className="flex flex-col gap-3">
+
+          <Link
+            href="/admin/configuracoes"
+            className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold transition"
+          >
+            ⚙️ Configuração da Empresa
+          </Link>
+
+          <Link
+            href="/admin/planos"
+            className="bg-zinc-800 hover:bg-yellow-500 hover:text-black p-3 rounded-xl font-semibold transition"
+          >
+            👑 Plano LavaTop Pro
+          </Link>
+
+          <Link
+            href="/admin/fidelidade"
+            className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold transition"
+          >
+            🎁 Programa Fidelidade
+          </Link>
+
+          <Link
+            href="/admin/clientes-fidelidade"
+            className="bg-zinc-800 hover:bg-cyan-600 p-3 rounded-xl font-semibold transition"
+          >
+            👥 Clientes Fidelidade
+          </Link>
+
+        </div>
+
+      </div>
+
+      {/* SAIR */}
+      <button
+        onClick={sair}
+        className="w-full py-3 rounded-xl border border-zinc-700 bg-zinc-900 hover:bg-red-600 hover:border-red-600 transition font-semibold text-zinc-300 hover:text-white"
+      >
+        🚪 Sair da Conta
+      </button>
+
+    </div>
+  );
 }
