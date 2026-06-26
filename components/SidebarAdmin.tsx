@@ -95,18 +95,35 @@ ${link}`;
           🔗 Copiar Link de Agendamento
         </button>
 
+      </div>
+
+    </div>
+
+    {/* INDIQUE O LAVATOP */}
+    <div className="bg-zinc-900 rounded-2xl p-5">
+
+      <h2 className="text-xl font-bold text-green-400 mb-2">
+        🤝 Indique o LavaTop
+      </h2>
+
+      <p className="text-sm text-gray-400 mb-4">
+        Indique o LavaTop para outro lava-rápido e ganhe <strong>30 dias grátis do Plano LavaTop Pro</strong> quando ele assinar.
+      </p>
+
+      <div className="flex flex-col gap-3">
+
         <button
           onClick={copiarLinkIndicacao}
           className="bg-cyan-600 hover:bg-cyan-700 p-3 rounded-xl font-bold"
         >
-          🤝 Copiar Link de Indicação
+          👥 Copiar Link de Indicação do LavaTop
         </button>
 
         <button
           onClick={compartilharWhatsapp}
           className="bg-green-600 hover:bg-green-700 p-3 rounded-xl font-bold"
         >
-          📲 Compartilhar no WhatsApp
+          📲 Indicar o LavaTop pelo WhatsApp
         </button>
 
       </div>
