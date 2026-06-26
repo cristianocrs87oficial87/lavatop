@@ -313,6 +313,7 @@ const finalizados = agendamentos.filter(
 const cancelados = agendamentos.filter(
   (item) => item.status === "Cancelado"
 ).length;
+console.log("EMPRESA:", empresa);
   return (
     <main className="min-h-screen bg-black p-10 text-white">
       <div className="flex justify-between items-center mb-10">
@@ -327,7 +328,10 @@ const cancelados = agendamentos.filter(
           Sair
         </button>
       </div>
-
+<BannerTesteGratis
+  premium={empresa?.premium || false}
+  premiumAte={empresa?.premium_ate || null}
+/>
 <div className="grid lg:grid-cols-4 gap-6">
 
   {/* Conteúdo Principal */}
