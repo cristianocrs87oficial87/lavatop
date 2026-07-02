@@ -71,3 +71,13 @@ export async function getServicosFinalizados(usuarioId: string) {
 
   return count || 0;
 }
+export async function getTicketMedio(usuarioId: string) {
+  const receita = await getReceitaMes(usuarioId);
+  const servicos = await getServicosFinalizados(usuarioId);
+
+  if (servicos === 0) {
+    return 0;
+  }
+
+  return receita / servicos;
+}
