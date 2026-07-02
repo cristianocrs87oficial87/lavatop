@@ -209,24 +209,27 @@ setHorariosOcupados(ocupados);
   const { error } = await supabase
   .from("agendamentos")
   .insert({
-  empresa_id: servicoSelecionado.empresa_id,
+    empresa_id: servicoSelecionado.empresa_id,
 
-  usuario_id: empresa.usuario_id,
+    usuario_id: empresa.usuario_id,
 
-  cliente,
-  telefone,
-  veiculo,
-  observacao,
+    cliente,
+    telefone,
+    veiculo,
+    observacao,
 
-  servico: servicoSelecionado.nome,
+    servico: servicoSelecionado.nome,
 
-  duracao_servico:
-    servicoSelecionado.duracao,
+    // NOVO
+    valor: Number(servicoSelecionado.preco),
 
-  data_agendamento: data,
-  hora_agendamento: horario,
+    duracao_servico:
+      servicoSelecionado.duracao,
 
-  status: "Pendente",
+    data_agendamento: data,
+    hora_agendamento: horario,
+
+    status: "Pendente",
 });
 
       if (error) {
