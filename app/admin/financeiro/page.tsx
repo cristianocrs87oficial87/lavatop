@@ -19,21 +19,33 @@ const [ticketMedio, setTicketMedio] = useState(0);
 
 useEffect(() => {
   async function carregarFinanceiro() {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+  console.log("Entrou no carregarFinanceiro");
 
-    if (!user) return;
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-    setReceitaHoje(await getReceitaHoje(user.id));
-    setReceitaMes(await getReceitaMes(user.id));
-    setServicosFinalizados(
-      await getServicosFinalizados(user.id)
-    );
-    setTicketMedio(
-  await getTicketMedio(user.id)
-);
-  }
+  console.log("Usuário:", user);
+
+  if (!user) return;
+
+  const receitaHoje = await getReceitaHoje(user.id);
+  console.log("Receita Hoje:", receitaHoje);
+
+  const receitaMes = await getReceitaMes(user.id);
+  console.log("Receita Mês:", receitaMes);
+
+  const servicos = await getServicosFinalizados(user.id);
+  console.log("Serviços Finalizados:", servicos);
+
+  const ticket = await getTicketMedio(user.id);
+  console.log("Ticket Médio:", ticket);
+
+  setReceitaHoje(receitaHoje);
+  setReceitaMes(receitaMes);
+  setServicosFinalizados(servicos);
+  setTicketMedio(ticket);
+}
 
   carregarFinanceiro();
 }, []);
