@@ -150,6 +150,12 @@ ${link}`;
           >
             ⚙️ Configuração da Empresa
           </Link>
+          <Link
+  href="/admin/financeiro"
+  className="bg-zinc-800 hover:bg-emerald-600 p-3 rounded-xl font-semibold transition"
+>
+  💰 Financeiro
+</Link>
 
           <Link
             href="/admin/planos"
