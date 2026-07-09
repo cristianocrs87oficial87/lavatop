@@ -1,4 +1,6 @@
 "use client";
+alert("Financeiro carregou");
+
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -12,6 +14,7 @@ import {
   getTicketMedio,
 } from "@/lib/financeiro";
 export default function FinanceiroPage() {
+    console.log("Página Financeiro renderizou");
     const [receitaHoje, setReceitaHoje] = useState(0);
 const [receitaMes, setReceitaMes] = useState(0);
 const [servicosFinalizados, setServicosFinalizados] = useState(0);
