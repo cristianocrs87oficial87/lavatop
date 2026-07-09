@@ -1,6 +1,4 @@
 "use client";
-alert("Financeiro carregou");
-
 
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase";
@@ -13,45 +11,30 @@ import {
   getServicosFinalizados,
   getTicketMedio,
 } from "@/lib/financeiro";
+
 export default function FinanceiroPage() {
-    console.log("Página Financeiro renderizou");
-    const [receitaHoje, setReceitaHoje] = useState(0);
-const [receitaMes, setReceitaMes] = useState(0);
-const [servicosFinalizados, setServicosFinalizados] = useState(0);
-const [ticketMedio, setTicketMedio] = useState(0);
+  const [receitaHoje, setReceitaHoje] = useState(0);
+  const [receitaMes, setReceitaMes] = useState(0);
+  const [servicosFinalizados, setServicosFinalizados] = useState(0);
+  const [ticketMedio, setTicketMedio] = useState(0);
 
-useEffect(() => {
-  async function carregarFinanceiro() {
-  console.log("Entrou no carregarFinanceiro");
+  useEffect(() => {
+    async function carregarFinanceiro() {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+      if (!user) return;
 
-  console.log("Usuário:", user);
+      setReceitaHoje(await getReceitaHoje(user.id));
+      setReceitaMes(await getReceitaMes(user.id));
+      setServicosFinalizados(await getServicosFinalizados(user.id));
+      setTicketMedio(await getTicketMedio(user.id));
+    }
 
-  if (!user) return;
+    carregarFinanceiro();
+  }, []);
 
-  const receitaHoje = await getReceitaHoje(user.id);
-  console.log("Receita Hoje:", receitaHoje);
-
-  const receitaMes = await getReceitaMes(user.id);
-  console.log("Receita Mês:", receitaMes);
-
-  const servicos = await getServicosFinalizados(user.id);
-  console.log("Serviços Finalizados:", servicos);
-
-  const ticket = await getTicketMedio(user.id);
-  console.log("Ticket Médio:", ticket);
-
-  setReceitaHoje(receitaHoje);
-  setReceitaMes(receitaMes);
-  setServicosFinalizados(servicos);
-  setTicketMedio(ticket);
-}
-
-  carregarFinanceiro();
-}, []);
   return (
     <div className="space-y-8">
 
@@ -66,18 +49,17 @@ useEffect(() => {
         </p>
       </div>
 
-      {/* Indicadores */}
+      {/* Cards */}
       <CardsFinanceiro
-  receitaHoje={receitaHoje}
-  receitaMes={receitaMes}
-  ticketMedio={ticketMedio}
-  servicosFinalizados={servicosFinalizados}
-  servicoMaisVendido="-"
-/>
+        receitaHoje={receitaHoje}
+        receitaMes={receitaMes}
+        ticketMedio={ticketMedio}
+        servicosFinalizados={servicosFinalizados}
+        servicoMaisVendido="-"
+      />
 
       {/* Gráfico */}
       <div className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6 shadow-lg">
-
         <h2 className="text-xl font-bold text-white mb-5">
           📈 Receita dos Últimos 30 Dias
         </h2>
@@ -85,14 +67,12 @@ useEffect(() => {
         <div className="h-80 rounded-xl border-2 border-dashed border-zinc-700 flex items-center justify-center text-zinc-500">
           O gráfico será implementado na próxima etapa.
         </div>
-
       </div>
 
       {/* Rankings */}
       <div className="grid gap-6 lg:grid-cols-2">
 
         <div className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6 shadow-lg">
-
           <h2 className="text-xl font-bold text-white mb-5">
             🏆 Serviços Mais Vendidos
           </h2>
@@ -100,11 +80,9 @@ useEffect(() => {
           <div className="text-zinc-500">
             Nenhum dado disponível.
           </div>
-
         </div>
 
         <div className="rounded-2xl bg-zinc-900 border border-zinc-800 p-6 shadow-lg">
-
           <h2 className="text-xl font-bold text-white mb-5">
             👥 Clientes que Mais Gastaram
           </h2>
@@ -112,7 +90,6 @@ useEffect(() => {
           <div className="text-zinc-500">
             Nenhum dado disponível.
           </div>
-
         </div>
 
       </div>
@@ -125,7 +102,6 @@ useEffect(() => {
         </h2>
 
         <div className="grid gap-3 md:grid-cols-2 lg:grid-cols-3">
-
           <Item texto="Meta mensal" />
           <Item texto="Comparativo mensal" />
           <Item texto="Gráfico anual" />
@@ -135,7 +111,6 @@ useEffect(() => {
           <Item texto="Horário mais movimentado" />
           <Item texto="Melhor dia da semana" />
           <Item texto="Previsão de faturamento" />
-
         </div>
 
       </div>
@@ -144,11 +119,7 @@ useEffect(() => {
   );
 }
 
-function Item({
-  texto,
-}: {
-  texto: string;
-}) {
+function Item({ texto }: { texto: string }) {
   return (
     <div className="rounded-xl bg-zinc-900 border border-zinc-800 p-4 hover:border-yellow-500 transition">
       🔒 {texto}
